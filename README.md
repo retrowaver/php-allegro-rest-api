@@ -2,7 +2,7 @@
 Simple interface for Allegro REST API resources
 
 ## Authorization and Tokens ##
-In order to use Allegro REST Api, you have to register your application and authorize it (https://developer.api.allegro.pl/auth/).
+In order to use Allegro REST Api, you have to register your application and authorize it (https://developer.allegro.pl/auth/).
 
 ### Authorization link ###
 ```php
