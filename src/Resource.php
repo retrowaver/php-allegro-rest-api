@@ -57,7 +57,7 @@ class Resource
 
         if ($data !== null) {
             $uri .= '?';
-            $uri .= http_build_query($data);
+            $uri .= $this->httpBuildQuery($data);
         }
 
         return $this->sendApiRequest($uri, 'GET');
@@ -91,7 +91,7 @@ class Resource
 
         if ($data !== null) {
             $uri .= '?';
-            $uri .= http_build_query($data);
+            $uri .= $this->httpBuildQuery($data);
         }
 
         return $this->sendApiRequest($uri, 'DELETE');
@@ -153,6 +153,22 @@ class Resource
         $context = stream_context_create($options);
 
         return file_get_contents($url, false, $context);
+    }
+
+    /**
+     * @param array $data
+     * @return string
+     */
+    protected function httpBuildQuery($data)
+    {
+        // Change booleans to strings ("true" / "false")
+        foreach ($data as $key => $value) {
+            if (gettype($value) === 'boolean') {
+                $data[$key] = var_export($value, true);
+            }
+        }
+
+        return preg_replace('/%5B\d+%5D/', '', http_build_query($data));
     }
 
     /**
