@@ -1,16 +1,20 @@
 {
-    "name": "wiatrogon/allegro-rest-api",
-    "description": "simple interface for Allegro REST API",
+    "name": "retrowaver/allegro-rest-api",
+    "description": "Simple PHP interface for Allegro REST API. Forked from github.com/Wiatrogon/php-allegro-rest-api",
     "license": "MIT",
     "authors": [
         {
             "name": "Piotr Jakubik",
             "email": "wiatrogon@gmail.com"
+        },
+        {
+            "name": "retrowaver"
         }
     ],
     "keywords" : [
         "allegro",
-        "rest"
+        "rest",
+        "php"
     ],
     "require": {
         "php": ">=5.3"
