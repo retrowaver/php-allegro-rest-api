@@ -46,6 +46,12 @@ class Api extends Resource
         return $this->accessToken;
     }
 
+    public function setAccessToken($accessToken)
+    {
+        $this->accessToken = $accessToken;
+        return $this;
+    }
+
     /**
      * @return string
      */
