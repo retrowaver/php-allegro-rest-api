@@ -24,14 +24,6 @@ class Resource
     }
 
     /**
-     * @return mixed
-     */
-    public function getApiKey()
-    {
-        return $this->parent->getApiKey();
-    }
-
-    /**
      * @return string
      */
     public function getUri()
@@ -118,11 +110,9 @@ class Resource
     protected function sendApiRequest($url, $method, $data = array())
     {
         $token = $this->getAccessToken();
-        $key = $this->getApiKey();
 
         $headers = array(
             "Authorization: Bearer $token",
-            "Api-Key: $key",
             "Content-Type: application/vnd.allegro.public.v1+json",
             "Accept: application/vnd.allegro.public.v1+json"
         );

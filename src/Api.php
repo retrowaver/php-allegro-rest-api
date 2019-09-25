@@ -14,17 +14,15 @@ class Api extends Resource
      * Api constructor.
      * @param string $clientId
      * @param string $clientSecret
-     * @param string $apiKey
      * @param string $redirectUri
      * @param null|string $accessToken
      * @param null|string $refreshToken
      */
-    public function __construct($clientId, $clientSecret, $apiKey, $redirectUri,
+    public function __construct($clientId, $clientSecret, $redirectUri,
                                 $accessToken = null, $refreshToken = null)
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
-        $this->apiKey = $apiKey;
         $this->redirectUri = $redirectUri;
         $this->accessToken = $accessToken;
         $this->refreshToken = $refreshToken;
@@ -55,20 +53,11 @@ class Api extends Resource
     /**
      * @return string
      */
-    public function getApiKey()
-    {
-        return $this->apiKey;
-    }
-
-    /**
-     * @return string
-     */
     public function getAuthorizationUri()
     {
         $data = array(
             'response_type' => 'code',
             'client_id' => $this->clientId,
-            'api-key' => $this->apiKey,
             'redirect_uri' => $this->redirectUri
         );
 
@@ -84,7 +73,6 @@ class Api extends Resource
         $data = array(
             'grant_type' => 'authorization_code',
             'code' => $code,
-            'api-key' => $this->apiKey,
             'redirect_uri' => $this->redirectUri
         );
 
@@ -98,7 +86,6 @@ class Api extends Resource
     {
         $data = array(
             'grant_type' => 'refresh_token',
-            'api-key' => $this->apiKey,
             'refresh_token' => $this->refreshToken,
             'redirect_uri' => $this->redirectUri
         );
@@ -143,11 +130,6 @@ class Api extends Resource
      * @var string
      */
     protected $clientSecret;
-
-    /**
-     * @var string
-     */
-    protected $apiKey;
 
     /**
      * @var string
