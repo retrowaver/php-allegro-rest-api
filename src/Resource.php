@@ -107,15 +107,15 @@ class Resource
      * @param array $data
      * @return bool|string
      */
-    protected function sendApiRequest($url, $method, $data = array())
+    protected function sendApiRequest($url, $method, $data = [])
     {
         $token = $this->getAccessToken();
 
-        $headers = array(
+        $headers = [
             "Authorization: Bearer $token",
             "Content-Type: application/vnd.allegro.public.v1+json",
             "Accept: application/vnd.allegro.public.v1+json"
-        );
+        ];
 
         $data = json_encode($data);
 
@@ -129,16 +129,16 @@ class Resource
      * @param string $data
      * @return bool|string
      */
-    protected function sendHttpRequest($url, $method, $headers = array(), $data = '')
+    protected function sendHttpRequest($url, $method, $headers = [], $data = '')
     {
-        $options = array(
-            'http' => array(
+        $options = [
+            'http' => [
                 'method' => $method,
                 'header' => implode("\r\n", $headers),
                 'content' => $data,
                 'ignore_errors' => true
-            )
-        );
+            ]
+        ];
 
         $context = stream_context_create($options);
 

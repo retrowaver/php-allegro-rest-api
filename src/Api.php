@@ -55,11 +55,11 @@ class Api extends Resource
      */
     public function getAuthorizationUri()
     {
-        $data = array(
+        $data = [
             'response_type' => 'code',
             'client_id' => $this->clientId,
             'redirect_uri' => $this->redirectUri
-        );
+        ];
 
         return static::AUTHORIZATION_URI . '?' . $this->httpBuildQuery($data);
     }
@@ -70,11 +70,11 @@ class Api extends Resource
      */
     public function getNewAccessToken($code)
     {
-        $data = array(
+        $data = [
             'grant_type' => 'authorization_code',
             'code' => $code,
             'redirect_uri' => $this->redirectUri
-        );
+        ];
 
         return $this->requestAccessToken($data);
     }
@@ -84,11 +84,11 @@ class Api extends Resource
      */
     public function refreshAccessToken()
     {
-        $data = array(
+        $data = [
             'grant_type' => 'refresh_token',
             'refresh_token' => $this->refreshToken,
             'redirect_uri' => $this->redirectUri
-        );
+        ];
 
         return $this->requestAccessToken($data);
     }
@@ -101,10 +101,10 @@ class Api extends Resource
     {
         $authorization = base64_encode($this->clientId . ':' . $this->clientSecret);
 
-        $headers = array(
+        $headers = [
             "Authorization: Basic $authorization",
             "Content-Type: application/x-www-form-urlencoded"
-        );
+        ];
 
         $data = $this->httpBuildQuery($data);
 
