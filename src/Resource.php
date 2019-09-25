@@ -3,6 +3,15 @@ namespace Allegro\REST;
 
 class Resource
 {
+    /**
+     * @var string
+     */
+    private $id;
+
+    /**
+     * @var Resource
+     */
+    private $parent;
 
     /**
      * Resource constructor.
@@ -16,11 +25,11 @@ class Resource
     }
 
     /**
-     * @return mixed
+     * @return Token
      */
-    public function getAccessToken()
+    public function getToken()
     {
-        return $this->parent->getAccessToken();
+        return $this->parent->getToken();
     }
 
     /**
@@ -109,7 +118,7 @@ class Resource
      */
     protected function sendApiRequest($url, $method, $data = [])
     {
-        $token = $this->getAccessToken();
+        $token = $this->getToken()->getAccessToken();
 
         $headers = [
             "Authorization: Bearer $token",
@@ -160,14 +169,4 @@ class Resource
 
         return preg_replace('/%5B\d+%5D/', '', http_build_query($data));
     }
-
-    /**
-     * @var string
-     */
-    private $id;
-
-    /**
-     * @var Resource
-     */
-    private $parent;
 }
