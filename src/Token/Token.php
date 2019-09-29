@@ -1,5 +1,5 @@
 <?php
-namespace Allegro\REST;
+namespace Allegro\REST\Token;
 
 class Token
 {

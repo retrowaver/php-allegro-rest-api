@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use Allegro\REST\Token;
+use Allegro\REST\Token\Token;
 
 final class TokenTest extends TestCase
 {

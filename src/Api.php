@@ -1,6 +1,8 @@
 <?php
 namespace Allegro\REST;
 
+use Allegro\REST\Token\Token;
+
 class Api extends Resource
 {
 
