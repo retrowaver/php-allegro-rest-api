@@ -27,17 +27,23 @@ class BaseTokenManager
 
     public function refreshToken(string $clientId, string $clientSecret, string $redirectUri, Token $token): void
     {
-
         $request = $this->messageFactory->createRequest(
             'POST',
             $this->getRefreshTokenUri($redirectUri, $token),
-            $this->getRefreshTokenHeaders($clientId, $clientSecret)
+            $this->getBasicAuthHeader($clientId, $clientSecret)
         );
 
         $response = $this->client->sendRequest($request);
 
-        $this->validateRefreshTokenResponse($request, $response);
+        $this->validateGetTokenResponse($request, $response);
         $this->updateTokenWithValidResponse($token, $response);
+    }
+
+    protected function getBasicAuthHeader(string $clientId, string $clientSecret): array
+    {
+        return [
+            'Authorization' => "Basic " . base64_encode($clientId . ':' . $clientSecret)
+        ];
     }
 
     protected function getRefreshTokenUri(string $redirectUri, Token $token): string
@@ -49,15 +55,7 @@ class BaseTokenManager
         ]);
     }
 
-    protected function getRefreshTokenHeaders(string $clientId, string $clientSecret): array
-    {
-        return [
-            'Authorization' => "Basic " . base64_encode($clientId . ':' . $clientSecret),
-            'Content-Type' => 'application/x-www-form-urlencoded'
-        ];
-    }
-
-    protected function validateRefreshTokenResponse(RequestInterface $request, ResponseInterface $response)
+    protected function validateGetTokenResponse(RequestInterface $request, ResponseInterface $response)
     {
         $decoded = json_decode((string)$response->getBody());
 
