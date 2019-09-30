@@ -15,6 +15,7 @@ use Psr\Http\Message\ResponseInterface;
 class BaseTokenManager
 {
     const TOKEN_URI = 'https://allegro.pl/auth/oauth/token';
+    const AUTH_URI = 'https://allegro.pl/auth/oauth/authorize';
 
     protected $client;
     protected $messageFactory;
@@ -44,6 +45,12 @@ class BaseTokenManager
         return [
             'Authorization' => "Basic " . base64_encode($clientId . ':' . $clientSecret)
         ];
+    }
+
+    protected function createTokenFromResponse(ResponseInterface $response): Token
+    {
+        $decoded = json_decode((string)$response->getBody());
+        return new Token($decoded->access_token, $decoded->refresh_token);
     }
 
     protected function getRefreshTokenUri(string $redirectUri, Token $token): string

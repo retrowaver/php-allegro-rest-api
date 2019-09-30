@@ -26,10 +26,4 @@ class ClientCredentialsTokenManager extends BaseTokenManager
             'grant_type' => 'client_credentials'
         ]);
     }
-
-    protected function createTokenFromResponse(ResponseInterface $response): Token
-    {
-        $decoded = json_decode((string)$response->getBody());
-        return new Token($decoded->access_token, $decoded->refresh_token);
-    }
 }
