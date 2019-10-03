@@ -24,7 +24,7 @@ class AuthorizationCodeTokenManager extends BaseTokenManager
 
         $response = $this->client->sendRequest($request);
 
-        $this->validateGetTokenResponse($request, $response);
+        $this->validateGetTokenResponse($request, $response, ['access_token', 'refresh_token']);
         return $this->createTokenFromResponse($response);
     }
 

@@ -9,11 +9,11 @@ class Token
     protected $accessToken;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $refreshToken;
 
-    public function __construct(string $accessToken, string $refreshToken)
+    public function __construct(string $accessToken, ?string $refreshToken)
     {
         $this->setAccessToken($accessToken);
         $this->setRefreshToken($refreshToken);
@@ -28,9 +28,9 @@ class Token
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getRefreshToken(): string
+    public function getRefreshToken(): ?string
     {
         return $this->refreshToken;
     }
@@ -46,10 +46,10 @@ class Token
     }
 
     /**
-     * @param string $refreshToken
+     * @param string|null $refreshToken
      * @return Token
      */
-    public function setRefreshToken(string $refreshToken): self
+    public function setRefreshToken(?string $refreshToken): self
     {
         $this->refreshToken = $refreshToken;
         return $this;
