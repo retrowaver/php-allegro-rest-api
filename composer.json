@@ -33,6 +33,7 @@
         "phpunit/phpunit": "^8",
         "php-http/mock-client": "^1.0",
         "php-http/message": "^1.0",
-        "guzzlehttp/psr7": "^1.0"
+        "guzzlehttp/psr7": "^1.0",
+        "php-http/guzzle6-adapter": "^2.0"
     }
 }
