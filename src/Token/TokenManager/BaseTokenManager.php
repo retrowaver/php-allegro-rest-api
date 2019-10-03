@@ -55,7 +55,7 @@ class BaseTokenManager
 
     protected function getRefreshTokenUri(string $redirectUri, Token $token): string
     {
-        return self::TOKEN_URI . "?" . http_build_query([
+        return static::TOKEN_URI . "?" . http_build_query([
             'grant_type' => 'refresh_token',
             'refresh_token' => $token->getRefreshToken(),
             'redirect_uri' => $redirectUri

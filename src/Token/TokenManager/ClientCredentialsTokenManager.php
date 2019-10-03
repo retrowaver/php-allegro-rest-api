@@ -22,7 +22,7 @@ class ClientCredentialsTokenManager extends BaseTokenManager
 
     protected function getClientCredentialsTokenUri(): string
     {
-        return self::TOKEN_URI . "?" . http_build_query([
+        return static::TOKEN_URI . "?" . http_build_query([
             'grant_type' => 'client_credentials'
         ]);
     }
