@@ -16,13 +16,13 @@ class ClientCredentialsTokenManager extends BaseTokenManager
 
         $response = $this->client->sendRequest($request);
 
-        $this->validateGetTokenResponse($request, $response);
+        $this->validateGetTokenResponse($request, $response, ['access_token']);
         return $this->createTokenFromResponse($response);
     }
 
     protected function getClientCredentialsTokenUri(): string
     {
-        return self::TOKEN_URI . "?" . http_build_query([
+        return static::TOKEN_URI . "?" . http_build_query([
             'grant_type' => 'client_credentials'
         ]);
     }

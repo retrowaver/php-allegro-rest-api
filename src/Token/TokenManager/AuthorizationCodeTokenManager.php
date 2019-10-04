@@ -7,7 +7,7 @@ class AuthorizationCodeTokenManager extends BaseTokenManager
 {
     public function getUri(string $clientId, string $redirectUri): string
     {
-        return self::AUTH_URI . '?' . http_build_query([
+        return static::AUTH_URI . '?' . http_build_query([
             'response_type' => 'code',
             'client_id' => $clientId,
             'redirect_uri' => $redirectUri
@@ -24,13 +24,13 @@ class AuthorizationCodeTokenManager extends BaseTokenManager
 
         $response = $this->client->sendRequest($request);
 
-        $this->validateGetTokenResponse($request, $response);
+        $this->validateGetTokenResponse($request, $response, ['access_token', 'refresh_token']);
         return $this->createTokenFromResponse($response);
     }
 
     protected function getAuthorizationCodeTokenUri(string $redirectUri, string $code)
     {
-        return self::TOKEN_URI . '?' . http_build_query([
+        return static::TOKEN_URI . '?' . http_build_query([
             'grant_type' => 'authorization_code',
             'code' => $code,
             'redirect_uri' => $redirectUri

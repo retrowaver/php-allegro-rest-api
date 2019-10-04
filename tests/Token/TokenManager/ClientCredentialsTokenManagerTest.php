@@ -56,13 +56,13 @@ final class ClientCredentialsTokenManagerTest extends TestCase
 
     public function invalidBodies(): array
     {
-        return [['invalid'], [''], ['{}'], ['{"access_token":"abc123"}'], [false], [null]];
+        return [['invalid'], [''], ['{}'], ['{"invalid":"abc123"}'], [false], [null]];
     }
 
     /**
      * @dataProvider validResponses
      */
-    public function testGetTokenGetsTokenOnValidResponse($body, $accessToken, $refreshToken): void
+    public function testGetTokenGetsTokenOnValidResponse($body, $accessToken): void
     {
         $client = new Client;
         $client->addResponse(new Response(200, [], $body));
@@ -76,13 +76,12 @@ final class ClientCredentialsTokenManagerTest extends TestCase
             $token
         );
         $this->assertEquals($accessToken, $token->getAccessToken());
-        $this->assertEquals($refreshToken, $token->getRefreshToken());
     }
 
     public function validResponses(): array
     {
         return [
-            ['{"access_token":"accessToken","refresh_token":"refreshToken"}', 'accessToken', 'refreshToken']
+            ['{"access_token":"accessToken"}', 'accessToken']
         ];
     }
 }

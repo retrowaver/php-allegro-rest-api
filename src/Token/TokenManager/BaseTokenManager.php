@@ -36,7 +36,7 @@ class BaseTokenManager
 
         $response = $this->client->sendRequest($request);
 
-        $this->validateGetTokenResponse($request, $response);
+        $this->validateGetTokenResponse($request, $response, ['access_token', 'refresh_token']);
         $this->updateTokenWithValidResponse($token, $response);
     }
 
@@ -50,20 +50,23 @@ class BaseTokenManager
     protected function createTokenFromResponse(ResponseInterface $response): Token
     {
         $decoded = json_decode((string)$response->getBody());
-        return new Token($decoded->access_token, $decoded->refresh_token);
+        return new Token($decoded->access_token, $decoded->refresh_token ?? null);
     }
 
     protected function getRefreshTokenUri(string $redirectUri, Token $token): string
     {
-        return self::TOKEN_URI . "?" . http_build_query([
+        return static::TOKEN_URI . "?" . http_build_query([
             'grant_type' => 'refresh_token',
             'refresh_token' => $token->getRefreshToken(),
             'redirect_uri' => $redirectUri
         ]);
     }
 
-    protected function validateGetTokenResponse(RequestInterface $request, ResponseInterface $response)
-    {
+    protected function validateGetTokenResponse(
+        RequestInterface $request,
+        ResponseInterface $response,
+        array $requiredFields = []
+    ) {
         $decoded = json_decode((string)$response->getBody());
 
         if (isset($decoded->error)) {
@@ -74,8 +77,10 @@ class BaseTokenManager
             throw HttpException::create($request, $response);
         }
 
-        if (!isset($decoded->access_token) || !isset($decoded->refresh_token)) {
-            throw new TransferException("Couldn't get tokens from response.");
+        foreach ($requiredFields as $field) {
+            if (!isset($decoded->{$field})) {
+                throw new TransferException("Couldn't extract data from response.");
+            }
         }
     }
 
