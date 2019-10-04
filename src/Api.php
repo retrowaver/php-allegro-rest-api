@@ -1,6 +1,10 @@
 <?php
 namespace Allegro\REST;
 
+use Http\Client\HttpClient;
+use Http\Discovery\HttpClientDiscovery;
+use Http\Message\MessageFactory;
+use Http\Discovery\MessageFactoryDiscovery;
 use Allegro\REST\Token\Token;
 
 class Api extends Resource
@@ -9,6 +13,21 @@ class Api extends Resource
     const API_URI = 'https://api.allegro.pl';
 
     const TOKEN_URI = 'https://allegro.pl/auth/oauth/token';
+
+    const DEFAULT_HEADERS = [
+        'Content-Type' => 'application/vnd.allegro.public.v1+json',
+        'Accept' => 'application/vnd.allegro.public.v1+json'
+    ];
+
+    /**
+     * @var HttpClient
+     */
+    protected $client;
+
+    /**
+     * @var MessageFactory
+     */
+    protected $messageFactory;
 
     /**
      * @var string
@@ -31,18 +50,33 @@ class Api extends Resource
     protected $token;
 
     /**
-     * Api constructor.
+     * @var array
+     */
+    protected $headers;
+
+    /**
+     * @param HttpClient|null $client
+     * @param MessageFactory|null $messageFactory
      * @param string $clientId
      * @param string $clientSecret
      * @param string $redirectUri
      * @param Token $token
      */
-    public function __construct($clientId, $clientSecret, $redirectUri, $token)
-    {
+    public function __construct(
+        ?HttpClient $client = null,
+        ?MessageFactory $messageFactory = null,
+        $clientId,
+        $clientSecret,
+        $redirectUri,
+        $token
+    ) {
+        $this->client = $client ?? HttpClientDiscovery::find();
+        $this->messageFactory = $messageFactory ?? MessageFactoryDiscovery::find();        
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->redirectUri = $redirectUri;
         $this->token = $token;
+        $this->setHeaders(self::DEFAULT_HEADERS);
     }
 
     /**
@@ -53,8 +87,37 @@ class Api extends Resource
         return static::API_URI;
     }
 
-    public function getToken(): Token
+    /**
+     * @return array
+     */
+    public function getHeaders(): array
     {
-        return $this->token;
+        return ['Authorization' => 'Bearer ' . $this->token->getAccessToken()] + $this->headers;
+    }
+
+    /**
+     * @param array $headers
+     * @return self
+     */
+    public function setHeaders(array $headers): self
+    {
+        $this->headers = $headers;
+        return $this;
+    }
+
+    /**
+     * @return HttpClient
+     */
+    protected function getClient(): HttpClient
+    {
+        return $this->client;
+    }
+
+    /**
+     * @return MessageFactory
+     */
+    protected function getMessageFactory(): MessageFactory
+    {
+        return $this->messageFactory;
     }
 }

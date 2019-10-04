@@ -1,6 +1,10 @@
 <?php
 namespace Allegro\REST;
 
+use Psr\Http\Message\ResponseInterface;
+use Http\Client\HttpClient;
+use Http\Message\MessageFactory;
+use Http\Client\Exception\TransferException;
 use Allegro\REST\Token\Token;
 
 class Resource
@@ -26,80 +30,6 @@ class Resource
         $this->parent = $parent;
     }
 
-    /**
-     * @return Token
-     */
-    public function getToken()
-    {
-        return $this->parent->getToken();
-    }
-
-    /**
-     * @return string
-     */
-    public function getUri()
-    {
-        return $this->parent->getUri() . '/' . $this->id;
-    }
-
-    /**
-     * @return Commands
-     */
-    public function commands()
-    {
-        return new Commands($this);
-    }
-
-    /**
-     * @param null|array $data
-     * @return bool|string
-     */
-    public function get($data = null)
-    {
-        $uri = $this->getUri();
-
-        if ($data !== null) {
-            $uri .= '?';
-            $uri .= $this->httpBuildQuery($data);
-        }
-
-        return $this->sendApiRequest($uri, 'GET');
-    }
-
-    /**
-     * @param array $data
-     * @return bool|string
-     */
-    public function put($data)
-    {
-        return $this->sendApiRequest($this->getUri(), 'PUT', $data);
-    }
-
-    /**
-     * @param array $data
-     * @return bool|string
-     */
-    public function post($data)
-    {
-        return $this->sendApiRequest($this->getUri(), 'POST', $data);
-    }
-
-    /**
-     * @param null|array $data
-     * @return bool|string
-     */
-    public function delete($data = null)
-    {
-        $uri = $this->getUri();
-
-        if ($data !== null) {
-            $uri .= '?';
-            $uri .= $this->httpBuildQuery($data);
-        }
-
-        return $this->sendApiRequest($uri, 'DELETE');
-    }
-
     public function __get($name)
     {
         return new Resource($name, $this);
@@ -113,47 +43,118 @@ class Resource
     }
 
     /**
-     * @param string $url
-     * @param string $method
-     * @param array $data
-     * @return bool|string
+     * @return string
      */
-    protected function sendApiRequest($url, $method, $data = [])
+    public function getUri()
     {
-        $token = $this->getToken()->getAccessToken();
+        return $this->parent->getUri() . '/' . $this->id;
+    }
 
-        $headers = [
-            "Authorization: Bearer $token",
-            "Content-Type: application/vnd.allegro.public.v1+json",
-            "Accept: application/vnd.allegro.public.v1+json"
-        ];
+    /**
+     * @return array
+     */
+    public function getHeaders(): array
+    {
+        return $this->parent->getHeaders();
+    }
 
-        $data = json_encode($data);
+    /**
+     * @return HttpClient
+     */
+    protected function getClient(): HttpClient
+    {
+        return $this->parent->getClient();
+    }
 
-        return $this->sendHttpRequest($url, $method, $headers, $data);
+    /**
+     * @return MessageFactory
+     */
+    protected function getMessageFactory(): MessageFactory
+    {
+        return $this->parent->getMessageFactory();
+    }
+
+    /**
+     * @return Commands
+     */
+    public function commands()
+    {
+        return new Commands($this);
+    }
+
+    /**
+     * @param null|array $data
+     * @throws TransferException on error
+     * @return ResponseInterface
+     */
+    public function get($data = null)
+    {
+        $uri = $this->getUri();
+
+        if ($data !== null) {
+            $uri .= '?' . $this->httpBuildQuery($data);
+        }
+
+        return $this->sendApiRequest($uri, 'GET');
+    }
+
+    /**
+     * @param array $data
+     * @throws TransferException on error
+     * @return ResponseInterface
+     */
+    public function put($data)
+    {
+        return $this->sendApiRequest($this->getUri(), 'PUT', $data);
+    }
+
+    /**
+     * @param array $data
+     * @throws TransferException on error
+     * @return ResponseInterface
+     */
+    public function post($data)
+    {
+        return $this->sendApiRequest($this->getUri(), 'POST', $data);
+    }
+
+    /**
+     * @param null|array $data
+     * @throws TransferException on error
+     * @return ResponseInterface
+     */
+    public function delete($data = null)
+    {
+        $uri = $this->getUri();
+
+        if ($data !== null) {
+            $uri .= '?' . $this->httpBuildQuery($data);
+        }
+
+        return $this->sendApiRequest($uri, 'DELETE');
     }
 
     /**
      * @param string $url
      * @param string $method
      * @param array $headers
-     * @param string $data
-     * @return bool|string
+     * @param array $data
+     * @return ResponseInterface
      */
-    protected function sendHttpRequest($url, $method, $headers = [], $data = '')
-    {
-        $options = [
-            'http' => [
-                'method' => $method,
-                'header' => implode("\r\n", $headers),
-                'content' => $data,
-                'ignore_errors' => true
-            ]
-        ];
-
-        $context = stream_context_create($options);
-
-        return file_get_contents($url, false, $context);
+    protected function sendApiRequest(
+        string $url,
+        string $method,
+        array $headers = [],
+        array $data = []
+    ): ResponseInterface {
+        return $this->getClient()->sendRequest(
+            $this->getMessageFactory()->createRequest(
+                $method,
+                $url,
+                $headers + $this->getHeaders(),
+                json_encode($data)
+            )
+        );
     }
 
     /**
