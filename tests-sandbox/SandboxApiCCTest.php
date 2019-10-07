@@ -12,14 +12,10 @@ final class SandboxApiCCTest extends TestCase
 {
     public function testGetOffersListingReturnsValidResponse()
     {
-        $credentials = require(__DIR__ . '/config.php');
         $token = require(__DIR__ . '/cc_token.php');
         $api = new Sandbox(
             new Client,
             null,
-            $credentials['clientId'],
-            $credentials['clientSecret'],
-            $credentials['redirectUri'],
             $token
         );
 

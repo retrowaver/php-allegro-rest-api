@@ -30,21 +30,6 @@ class Api extends Resource
     protected $messageFactory;
 
     /**
-     * @var string
-     */
-    protected $clientId;
-
-    /**
-     * @var string
-     */
-    protected $clientSecret;
-
-    /**
-     * @var string
-     */
-    protected $redirectUri;
-
-    /**
      * @var Token
      */
     protected $token;
@@ -57,24 +42,15 @@ class Api extends Resource
     /**
      * @param HttpClient|null $client
      * @param MessageFactory|null $messageFactory
-     * @param string $clientId
-     * @param string $clientSecret
-     * @param string $redirectUri
      * @param Token $token
      */
     public function __construct(
         ?HttpClient $client = null,
         ?MessageFactory $messageFactory = null,
-        $clientId,
-        $clientSecret,
-        $redirectUri,
         $token
     ) {
         $this->client = $client ?? HttpClientDiscovery::find();
-        $this->messageFactory = $messageFactory ?? MessageFactoryDiscovery::find();        
-        $this->clientId = $clientId;
-        $this->clientSecret = $clientSecret;
-        $this->redirectUri = $redirectUri;
+        $this->messageFactory = $messageFactory ?? MessageFactoryDiscovery::find();
         $this->token = $token;
         $this->setHeaders(self::DEFAULT_HEADERS);
     }
