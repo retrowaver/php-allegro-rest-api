@@ -12,5 +12,10 @@ final class TokenTest extends TestCase
             Token::class,
             new Token('some access token', 'some refresh token')
         );
+
+        $this->assertInstanceOf(
+            Token::class,
+            new Token('access token only')
+        );
     }
 }

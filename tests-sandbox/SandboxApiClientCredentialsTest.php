@@ -8,7 +8,7 @@ use Http\Adapter\Guzzle6\Client;
 use Http\Client\Exception\TransferException;
 use Allegro\REST\Sandbox;
 
-final class SandboxApiCCTest extends TestCase
+final class SandboxApiClientCredentialsTest extends TestCase
 {
     public function testGetOffersListingReturnsValidResponse()
     {

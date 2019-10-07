@@ -2,5 +2,6 @@
 return [
     'clientId' => '...',
     'clientSecret' => '...',
-    'redirectUri' => '...'
+    'redirectUri' => '...',
+    'accessToken' => '...' // for authorization code flow only
 ];

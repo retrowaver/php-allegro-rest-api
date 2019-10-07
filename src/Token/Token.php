@@ -13,7 +13,7 @@ class Token
      */
     protected $refreshToken;
 
-    public function __construct(string $accessToken, ?string $refreshToken)
+    public function __construct(string $accessToken, ?string $refreshToken = null)
     {
         $this->setAccessToken($accessToken);
         $this->setRefreshToken($refreshToken);
