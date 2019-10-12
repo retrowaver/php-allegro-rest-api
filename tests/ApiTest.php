@@ -14,7 +14,8 @@ final class ApiTest extends TestCase
             new Api(
                 new Client,
                 null,
-                new Token('accessToken', 'refreshToken')
+                new Token('accessToken', 'refreshToken'),
+                []
             )
         );
     }

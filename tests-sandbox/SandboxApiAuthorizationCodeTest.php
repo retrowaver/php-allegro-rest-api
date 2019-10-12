@@ -41,4 +41,13 @@ final class SandboxApiAuthorizationCodeTest extends TestCase
         $response = $this->getApi()->sale->offers->get(['name' => 'offer name']);
         $this->assertEquals(200, $response->getStatusCode());
     }
+
+    public function testOfferImageCanBeUploaded()
+    {
+        $response = $this->getApi()->sale->images->post(
+            file_get_contents(__DIR__ . '/_data/sample_image.jpg'),
+            ['Content-Type' => 'image/jpeg']
+        );
+        $this->assertEquals(201, $response->getStatusCode());
+    }
 }

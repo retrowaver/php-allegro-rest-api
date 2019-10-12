@@ -6,6 +6,8 @@ use Http\Discovery\HttpClientDiscovery;
 use Http\Message\MessageFactory;
 use Http\Discovery\MessageFactoryDiscovery;
 use Allegro\REST\Token\Token;
+use Allegro\REST\Middleware\HttplugMiddlewareDecorator;
+use Allegro\REST\Middleware\MiddlewareInterface;
 
 class Api extends Resource
 {
@@ -43,13 +45,18 @@ class Api extends Resource
      * @param HttpClient|null $client
      * @param MessageFactory|null $messageFactory
      * @param Token $token
+     * @param MiddlewareInterface[] $middleware
      */
     public function __construct(
         ?HttpClient $client = null,
         ?MessageFactory $messageFactory = null,
-        $token
+        Token $token,
+        array $middleware = []
     ) {
-        $this->client = $client ?? HttpClientDiscovery::find();
+        $this->client = new HttplugMiddlewareDecorator(
+            $client ?? HttpClientDiscovery::find(),
+            $middleware
+        );
         $this->messageFactory = $messageFactory ?? MessageFactoryDiscovery::find();
         $this->token = $token;
         $this->setHeaders(self::DEFAULT_HEADERS);

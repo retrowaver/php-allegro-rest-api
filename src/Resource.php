@@ -24,7 +24,7 @@ class Resource
      * @param string $id
      * @param Resource $parent
      */
-    public function __construct($id, Resource $parent)
+    public function __construct(string $id, Resource $parent)
     {
         $this->id = $id;
         $this->parent = $parent;
@@ -45,7 +45,7 @@ class Resource
     /**
      * @return string
      */
-    public function getUri()
+    public function getUri(): string
     {
         return $this->parent->getUri() . '/' . $this->id;
     }
@@ -77,17 +77,18 @@ class Resource
     /**
      * @return Commands
      */
-    public function commands()
+    public function commands(): Commands
     {
         return new Commands($this);
     }
 
     /**
      * @param null|array $data
+     * @param array $headers
      * @throws TransferException on error
      * @return ResponseInterface
      */
-    public function get($data = null)
+    public function get(?array $data = null, array $headers = []): ResponseInterface
     {
         $uri = $this->getUri();
 
@@ -95,35 +96,38 @@ class Resource
             $uri .= '?' . $this->httpBuildQuery($data);
         }
 
-        return $this->sendApiRequest($uri, 'GET');
+        return $this->sendApiRequest($uri, 'GET', $headers);
     }
 
     /**
      * @param array $data
+     * @param array $headers
      * @throws TransferException on error
      * @return ResponseInterface
      */
-    public function put($data)
+    public function put(?array $data, array $headers = []): ResponseInterface
     {
-        return $this->sendApiRequest($this->getUri(), 'PUT', $data);
+        return $this->sendApiRequest($this->getUri(), 'PUT', $headers, $data);
     }
 
     /**
-     * @param array $data
+     * @param array|string|null $data
+     * @param array $headers
      * @throws TransferException on error
      * @return ResponseInterface
      */
-    public function post($data)
+    public function post($data, array $headers = [])
     {
-        return $this->sendApiRequest($this->getUri(), 'POST', $data);
+        return $this->sendApiRequest($this->getUri(), 'POST', $headers, $data);
     }
 
     /**
      * @param null|array $data
+     * @param array $headers
      * @throws TransferException on error
      * @return ResponseInterface
      */
-    public function delete($data = null)
+    public function delete($data = null, array $headers = [])
     {
         $uri = $this->getUri();
 
@@ -131,28 +135,28 @@ class Resource
             $uri .= '?' . $this->httpBuildQuery($data);
         }
 
-        return $this->sendApiRequest($uri, 'DELETE');
+        return $this->sendApiRequest($uri, 'DELETE', $headers);
     }
 
     /**
      * @param string $url
      * @param string $method
      * @param array $headers
-     * @param array $data
+     * @param array|string|null $data
      * @return ResponseInterface
      */
     protected function sendApiRequest(
         string $url,
         string $method,
         array $headers = [],
-        array $data = []
+        $data = null
     ): ResponseInterface {
         return $this->getClient()->sendRequest(
             $this->getMessageFactory()->createRequest(
                 $method,
                 $url,
                 $headers + $this->getHeaders(),
-                json_encode($data)
+                is_array($data) ? json_encode($data) : $data
             )
         );
     }
