@@ -15,7 +15,7 @@ class Commands
     public function __call($name, $args)
     {
         $data = array_shift($args);
-        $name = str_replace('_', '-', $name) . '-commands';
+        $name .= '-commands';
         $type = new Resource($name, $this->resource);
         $command = new Resource($this->getUuid(), $type);
 
