@@ -6,6 +6,12 @@ use Psr\Http\Message\ResponseInterface;
 use Allegro\REST\Middleware\MiddlewareInterface;
 use Allegro\REST\Middleware\RequestHandlerInterface;
 
+/**
+ * Image upload middleware
+ * 
+ * Middleware that handles a unique case of image upload request
+ * (URI host is changed, while the rest remains the same).
+ */
 class ImageUploadMiddleware implements MiddlewareInterface
 {
     public function process(

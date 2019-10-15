@@ -11,11 +11,19 @@ use Allegro\REST\Middleware\MiddlewareInterface;
 
 class Api extends Resource
 {
-
+    /**
+     * @var string
+     */
     const API_URI = 'https://api.allegro.pl';
 
+    /**
+     * @var string
+     */
     const TOKEN_URI = 'https://allegro.pl/auth/oauth/token';
 
+    /**
+     * @var array
+     */
     const DEFAULT_HEADERS = [
         'Content-Type' => 'application/vnd.allegro.public.v1+json',
         'Accept' => 'application/vnd.allegro.public.v1+json'

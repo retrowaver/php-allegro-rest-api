@@ -7,8 +7,16 @@ use Allegro\REST\Middleware\MiddlewareInterface;
 use Http\Client\HttpClient;
 use Allegro\REST\Middleware\RequestHandlerInterface;
 
+/**
+ * Base middleware
+ * 
+ * Deepest middleware that sends a request to API and returns a response.
+ */
 class BaseMiddleware implements MiddlewareInterface
 {
+    /**
+     * @var HttpClient
+     */
     protected $client;
 
     public function __construct(HttpClient $client)

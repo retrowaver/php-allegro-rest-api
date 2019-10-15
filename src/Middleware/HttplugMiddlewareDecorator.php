@@ -7,15 +7,29 @@ use Http\Client\HttpClient;
 use Allegro\REST\Middleware\Middleware\BaseMiddleware;
 use Allegro\REST\Middleware\Middleware\ImageUploadMiddleware;
 
+/**
+ * HTTPlug middleware decorator
+ * 
+ * Decorator that introduces middleware for HTTPlug client
+ * Inspired by PSR-15 and https://github.com/relayphp/Relay.Relay.
+ */
 class HttplugMiddlewareDecorator implements HttpClient
 {
+    /**
+     * @var HttpClient
+     */
     protected $client;
 
-    public function __construct(HttpClient $client, array $queue)
+    /**
+     * @var MiddlewareInterface[]
+     */
+    protected $middlewares;
+
+    public function __construct(HttpClient $client, array $middlewares = [])
     {
         $this->client = $client;
-        $this->queue = array_merge(
-            $queue,
+        $this->middlewares = array_merge(
+            $middlewares,
             [
                 new ImageUploadMiddleware,
                 new BaseMiddleware($client)
@@ -30,9 +44,8 @@ class HttplugMiddlewareDecorator implements HttpClient
 
     protected function handle(RequestInterface $request): ResponseInterface
     {
-        reset($this->queue);
-
-        $runner = new Runner($this->queue);
+        reset($this->middlewares);
+        $runner = new Runner($this->middlewares);
         return $runner->handle($request);
     }
 }
