@@ -37,9 +37,25 @@ class Resource
 
     public function __call($name, $args)
     {
+        $previous = new Resource($name, $this);
         $id = array_shift($args);
-        $collection = new Resource($name, $this);
-        return new Resource($id, $collection);
+
+        if ($this->isResourceACommand($previous)) {
+            return new Resource(
+                $id ?? $this->getUuid(),
+                $previous
+            );
+        }
+
+        return new Resource($id, $previous);
+    }
+
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
     }
 
     /**
@@ -75,11 +91,21 @@ class Resource
     }
 
     /**
-     * @return Commands
+     * @return string
      */
-    public function commands(): Commands
+    private function getUuid(): string
     {
-        return new Commands($this);
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0x0fff) | 0x4000,
+            mt_rand(0, 0x3fff) | 0x8000,
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
+        );
     }
 
     /**
@@ -175,5 +201,10 @@ class Resource
         }
 
         return preg_replace('/%5B\d+%5D/', '', http_build_query($data));
+    }
+
+    protected function isResourceACommand(Resource $resource): bool
+    {
+        return (substr($resource->getId(), -9) === '-commands');
     }
 }
