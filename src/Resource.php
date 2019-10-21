@@ -6,9 +6,14 @@ use Http\Client\HttpClient;
 use Http\Message\MessageFactory;
 use Http\Client\Exception\TransferException;
 use Allegro\REST\Token\Token;
+use Allegro\REST\Traits\HttpBuildQuery;
+use Allegro\REST\Traits\Uuid;
 
 class Resource
 {
+    use HttpBuildQuery;
+    use Uuid;
+
     /**
      * @var string
      */
@@ -30,17 +35,26 @@ class Resource
         $this->parent = $parent;
     }
 
-    public function __get($name)
+    /**
+     * @param string $name
+     * @return Resource
+     */
+    public function __get(string $name): Resource
     {
         return new Resource($name, $this);
     }
 
-    public function __call($name, $args)
+    /**
+     * @param string $name
+     * @param array $args
+     * @return Resource
+     */
+    public function __call(string $name, array $args): Resource
     {
         $previous = new Resource($name, $this);
         $id = array_shift($args);
 
-        if ($this->isResourceACommand($previous)) {
+        if ($previous->isCommand()) {
             return new Resource(
                 $id ?? $this->getUuid(),
                 $previous
@@ -59,11 +73,18 @@ class Resource
     }
 
     /**
+     * @param null|array $queryParams
      * @return string
      */
-    public function getUri(): string
+    public function getUri(?array $queryParams = null): string
     {
-        return $this->parent->getUri() . '/' . $this->id;
+        $uri = $this->parent->getUri() . '/' . $this->id;
+
+        if (!empty($queryParams)) {
+            $uri .= '?' . $this->httpBuildQuery($queryParams);
+        }
+
+        return $uri;
     }
 
     /**
@@ -75,54 +96,26 @@ class Resource
     }
 
     /**
-     * @return HttpClient
+     * @return bool
      */
-    protected function getClient(): HttpClient
+    public function isCommand(): bool
     {
-        return $this->parent->getClient();
+        return (substr($this->getId(), -9) === '-commands');
     }
 
     /**
-     * @return MessageFactory
-     */
-    protected function getMessageFactory(): MessageFactory
-    {
-        return $this->parent->getMessageFactory();
-    }
-
-    /**
-     * @return string
-     */
-    private function getUuid(): string
-    {
-        return sprintf(
-            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0x0fff) | 0x4000,
-            mt_rand(0, 0x3fff) | 0x8000,
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff)
-        );
-    }
-
-    /**
-     * @param null|array $data
+     * @param null|array $queryParams
      * @param array $headers
      * @throws TransferException on error
      * @return ResponseInterface
      */
-    public function get(?array $data = null, array $headers = []): ResponseInterface
+    public function get(?array $queryParams = null, array $headers = []): ResponseInterface
     {
-        $uri = $this->getUri();
-
-        if ($data !== null) {
-            $uri .= '?' . $this->httpBuildQuery($data);
-        }
-
-        return $this->sendApiRequest($uri, 'GET', $headers);
+        return $this->sendApiRequest(
+            $this->getUri($queryParams),
+            'GET',
+            $headers
+        );
     }
 
     /**
@@ -148,20 +141,18 @@ class Resource
     }
 
     /**
-     * @param null|array $data
+     * @param null|array $queryParams
      * @param array $headers
      * @throws TransferException on error
      * @return ResponseInterface
      */
-    public function delete($data = null, array $headers = [])
+    public function delete(?array $queryParams = null, array $headers = [])
     {
-        $uri = $this->getUri();
-
-        if ($data !== null) {
-            $uri .= '?' . $this->httpBuildQuery($data);
-        }
-
-        return $this->sendApiRequest($uri, 'DELETE', $headers);
+        return $this->sendApiRequest(
+            $this->getUri($queryParams),
+            'DELETE',
+            $headers
+        );
     }
 
     /**
@@ -188,23 +179,18 @@ class Resource
     }
 
     /**
-     * @param array $data
-     * @return string
+     * @return HttpClient
      */
-    protected function httpBuildQuery($data)
+    protected function getClient(): HttpClient
     {
-        // Change booleans to strings ("true" / "false")
-        foreach ($data as $key => $value) {
-            if (gettype($value) === 'boolean') {
-                $data[$key] = var_export($value, true);
-            }
-        }
-
-        return preg_replace('/%5B\d+%5D/', '', http_build_query($data));
+        return $this->parent->getClient();
     }
 
-    protected function isResourceACommand(Resource $resource): bool
+    /**
+     * @return MessageFactory
+     */
+    protected function getMessageFactory(): MessageFactory
     {
-        return (substr($resource->getId(), -9) === '-commands');
+        return $this->parent->getMessageFactory();
     }
 }
