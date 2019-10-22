@@ -3,7 +3,8 @@
 use PHPUnit\Framework\TestCase;
 use Http\Mock\Client;
 use Allegro\REST\Api;
-use Allegro\REST\Token\Token;
+use Allegro\REST\Token\ClientCredentialsToken;
+use Allegro\REST\Token\Credentials;
 
 final class ApiTest extends TestCase
 {
@@ -14,7 +15,7 @@ final class ApiTest extends TestCase
             new Api(
                 new Client,
                 null,
-                new Token('accessToken', 'refreshToken'),
+                new ClientCredentialsToken('accessToken'),
                 []
             )
         );
@@ -26,7 +27,7 @@ final class ApiTest extends TestCase
         $api = new Api(
             $client,
             null,
-            new Token('accessToken', 'refreshToken'),
+            new ClientCredentialsToken('accessToken'),
             []
         );
 

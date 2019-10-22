@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use Allegro\REST\Token\TokenManager\Sandbox\SandboxClientCredentialsTokenManager;
-use Allegro\REST\Token\Token;
+use Allegro\REST\Token\ClientCredentialsToken;
 use Http\Adapter\Guzzle6\Client;
 use Http\Client\Exception\TransferException;
+use Allegro\REST\Token\Credentials;
 
 final class SandboxClientCredentialsTokenManagerTest extends TestCase
 {
@@ -24,24 +25,23 @@ final class SandboxClientCredentialsTokenManagerTest extends TestCase
         $clientCredentialsTokenManager = new SandboxClientCredentialsTokenManager($client);
 
         $this->expectException(TransferException::class);
-        $clientCredentialsTokenManager->getToken('clientId', 'clientSecret');
+        $clientCredentialsTokenManager->getClientCredentialsToken(
+            new Credentials([])
+        );
     }
 
     public function testGetTokenReturnsTokenOnValidCredentials(): void
     {
         $client = new Client;
-
         $clientCredentialsTokenManager = new SandboxClientCredentialsTokenManager($client);
-
         $credentials = require(__DIR__ . '/../config.php');
 
-        $token = $clientCredentialsTokenManager->getToken(
-            $credentials['clientId'],
-            $credentials['clientSecret']
+        $token = $clientCredentialsTokenManager->getClientCredentialsToken(
+            new Credentials($credentials)
         );
 
         $this->assertInstanceOf(
-            Token::class,
+            ClientCredentialsToken::class,
             $token
         );
     }

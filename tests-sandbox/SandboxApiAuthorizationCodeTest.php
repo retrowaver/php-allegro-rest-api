@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use Allegro\REST\Token\TokenManager\Sandbox\SandboxClientCredentialsTokenManager;
-use Allegro\REST\Token\Token;
+use Allegro\REST\Token\AuthorizationCodeToken;
 use Http\Adapter\Guzzle6\Client;
 use Http\Client\Exception\TransferException;
 use Allegro\REST\Sandbox;
@@ -19,7 +19,10 @@ final class SandboxApiAuthorizationCodeTest extends TestCase
             $this->api = new Sandbox(
                 new Client,
                 null,
-                new Token($credentials['accessToken'])
+                new AuthorizationCodeToken(
+                    $credentials['accessToken'],
+                    'refreshToken' // it's not tested yet    
+                )
             );
         }
 

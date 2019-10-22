@@ -6,7 +6,9 @@ use Allegro\REST\Token\TokenManager\AuthorizationCodeTokenManager;
 use Http\Mock\Client;
 use GuzzleHttp\Psr7\Response;
 use Http\Client\Exception\TransferException;
-use Allegro\REST\Token\Token;
+use Allegro\REST\Token\AuthorizationCodeTokenInterface;
+use Allegro\REST\Token\AuthorizationCodeToken;
+use Allegro\REST\Token\Credentials;
 
 final class AuthorizationCodeTokenManagerTest extends TestCase
 {
@@ -24,14 +26,20 @@ final class AuthorizationCodeTokenManagerTest extends TestCase
 
         $this->assertEquals(
             'https://allegro.pl/auth/oauth/authorize?response_type=code&client_id=clientId&redirect_uri=redirectUri',
-            $tokenManager->getUri('clientId', 'redirectUri')
+            $tokenManager->getUri(
+                new Credentials([
+                    'clientId' => 'clientId',
+                    'clientSecret' => 'clientSecret',
+                    'redirectUri' => 'redirectUri'
+                ])
+            )
         );
     }
 
     /**
      * @dataProvider errorStatusCodes
      */
-    public function testGetTokenThrowsTransferExceptionOnErrorStatusCode($errorStatusCode): void
+    public function testGetAuthCodeTokenThrowsTransferExceptionOnErrorStatusCode($errorStatusCode): void
     {
         $client = new Client;
         $client->addResponse(new Response($errorStatusCode));
@@ -39,7 +47,14 @@ final class AuthorizationCodeTokenManagerTest extends TestCase
         $tokenManager = new AuthorizationCodeTokenManager($client);
 
         $this->expectException(TransferException::class);
-        $tokenManager->getToken('clientId', 'clientSecret', 'redirectUri', 'code');
+        $tokenManager->getAuthorizationCodeToken(
+            new Credentials([
+                'clientId' => 'clientId',
+                'clientSecret' => 'clientSecret',
+                'redirectUri' => 'redirectUri'
+            ]),
+            'code'
+        );
         
     }
 
@@ -52,7 +67,7 @@ final class AuthorizationCodeTokenManagerTest extends TestCase
      * @dataProvider invalidBodies
      */
 
-    public function testGetTokenThrowsTransferExceptionOnInvalidBody($body): void
+    public function testGetAuthCodeTokenThrowsTransferExceptionOnInvalidBody($body): void
     {
         $client = new Client;
         $client->addResponse(new Response(200, [], $body));
@@ -60,7 +75,14 @@ final class AuthorizationCodeTokenManagerTest extends TestCase
         $tokenManager = new AuthorizationCodeTokenManager($client);
 
         $this->expectException(TransferException::class);
-        $tokenManager->getToken('clientId', 'clientSecret', 'redirectUri', 'code');
+        $tokenManager->getAuthorizationCodeToken(
+            new Credentials([
+                'clientId' => 'clientId',
+                'clientSecret' => 'clientSecret',
+                'redirectUri' => 'redirectUri'
+            ]),
+            'code'
+        );
         
     }
 
@@ -72,17 +94,24 @@ final class AuthorizationCodeTokenManagerTest extends TestCase
     /**
      * @dataProvider validResponses
      */
-    public function testGetTokenGetsTokenOnValidResponse($body, $accessToken, $refreshToken): void
+    public function testGetAuthCodeTokenGetsTokenOnValidResponse($body, $accessToken, $refreshToken): void
     {
         $client = new Client;
         $client->addResponse(new Response(200, [], $body));
 
         $tokenManager = new AuthorizationCodeTokenManager($client);
 
-        $token = $tokenManager->getToken('clientId', 'clientSecret', 'redirectUri', 'code');
+        $token = $tokenManager->getAuthorizationCodeToken(
+            new Credentials([
+                'clientId' => 'clientId',
+                'clientSecret' => 'clientSecret',
+                'redirectUri' => 'redirectUri'
+            ]),
+            'code'
+        );
 
         $this->assertInstanceOf(
-            Token::class,
+            AuthorizationCodeTokenInterface::class,
             $token
         );
         $this->assertEquals($accessToken, $token->getAccessToken());
@@ -90,6 +119,37 @@ final class AuthorizationCodeTokenManagerTest extends TestCase
     }
 
     public function validResponses(): array
+    {
+        return [
+            ['{"access_token":"accessToken","refresh_token":"refreshToken"}', 'accessToken', 'refreshToken']
+        ];
+    }
+
+    /**
+     * @dataProvider validRefreshTokenResponses
+     */
+    public function testRefreshTokenRefreshesTokenOnValidResponse($body, $accessToken, $refreshToken)
+    {
+        $client = new Client;
+        $client->addResponse(new Response(200, [], $body));
+
+        $tokenManager = new AuthorizationCodeTokenManager($client);
+
+        $token = new AuthorizationCodeToken('oldAccessToken', 'oldRefreshToken');
+        $tokenManager->refreshToken(
+            new Credentials([
+                'clientId' => 'clientId',
+                'clientSecret' => 'clientSecret',
+                'redirectUri' => 'redirectUri'
+            ]),
+            $token
+        );
+
+        $this->assertEquals($accessToken, $token->getAccessToken());
+        $this->assertEquals($refreshToken, $token->getRefreshToken());
+    }
+
+    public function validRefreshTokenResponses(): array
     {
         return [
             ['{"access_token":"accessToken","refresh_token":"refreshToken"}', 'accessToken', 'refreshToken']

@@ -1,6 +1,8 @@
 <?php
 namespace Allegro\REST\Token\TokenManager;
 
+
+/// some of these might not be neeeded
 use Allegro\REST\Token\Token;
 use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
@@ -11,6 +13,8 @@ use Http\Client\Exception\HttpException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
+use Allegro\REST\Token\CredentialsInterface;
+
 
 class BaseTokenManager
 {
@@ -20,46 +24,19 @@ class BaseTokenManager
     protected $client;
     protected $messageFactory;
 
-    public function __construct(?HttpClient $client = null, ?MessageFactory $messageFactory = null)
-    {
+    public function __construct(
+        ?HttpClient $client = null,
+        ?MessageFactory $messageFactory = null
+    ) {
         $this->client = $client ?? HttpClientDiscovery::find();
         $this->messageFactory = $messageFactory ?? MessageFactoryDiscovery::find();
     }
 
-    public function refreshToken(string $clientId, string $clientSecret, string $redirectUri, Token $token): void
-    {
-        $request = $this->messageFactory->createRequest(
-            'POST',
-            $this->getRefreshTokenUri($redirectUri, $token),
-            $this->getBasicAuthHeader($clientId, $clientSecret)
-        );
-
-        $response = $this->client->sendRequest($request);
-
-        $this->validateGetTokenResponse($request, $response, ['access_token', 'refresh_token']);
-        $this->updateTokenWithValidResponse($token, $response);
-    }
-
-    protected function getBasicAuthHeader(string $clientId, string $clientSecret): array
+    protected function getBasicAuthHeader(CredentialsInterface $credentials): array
     {
         return [
-            'Authorization' => "Basic " . base64_encode($clientId . ':' . $clientSecret)
+            'Authorization' => "Basic " . base64_encode($credentials->getClientId() . ':' . $credentials->getClientSecret())
         ];
-    }
-
-    protected function createTokenFromResponse(ResponseInterface $response): Token
-    {
-        $decoded = json_decode((string)$response->getBody());
-        return new Token($decoded->access_token, $decoded->refresh_token ?? null);
-    }
-
-    protected function getRefreshTokenUri(string $redirectUri, Token $token): string
-    {
-        return static::TOKEN_URI . "?" . http_build_query([
-            'grant_type' => 'refresh_token',
-            'refresh_token' => $token->getRefreshToken(),
-            'redirect_uri' => $redirectUri
-        ]);
     }
 
     protected function validateGetTokenResponse(
@@ -82,12 +59,5 @@ class BaseTokenManager
                 throw new TransferException("Couldn't extract data from response.");
             }
         }
-    }
-
-    protected function updateTokenWithValidResponse(Token $token, ResponseInterface $response)
-    {
-        $decoded = json_decode((string)$response->getBody());
-        $token->setAccessToken($decoded->access_token);
-        $token->setRefreshToken($decoded->refresh_token);
     }
 }

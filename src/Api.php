@@ -5,7 +5,7 @@ use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Message\MessageFactory;
 use Http\Discovery\MessageFactoryDiscovery;
-use Allegro\REST\Token\Token;
+use Allegro\REST\Token\TokenInterface;
 use Allegro\REST\Middleware\HttplugMiddlewareDecorator;
 use Allegro\REST\Middleware\MiddlewareInterface;
 
@@ -40,7 +40,7 @@ class Api extends Resource
     protected $messageFactory;
 
     /**
-     * @var Token
+     * @var TokenInterface
      */
     protected $token;
 
@@ -58,7 +58,7 @@ class Api extends Resource
     public function __construct(
         ?HttpClient $client = null,
         ?MessageFactory $messageFactory = null,
-        Token $token,
+        TokenInterface $token,
         array $middleware = []
     ) {
         $this->client = new HttplugMiddlewareDecorator(

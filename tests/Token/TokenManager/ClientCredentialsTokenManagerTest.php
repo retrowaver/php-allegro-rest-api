@@ -7,6 +7,8 @@ use Allegro\REST\Token\Token;
 use Http\Mock\Client;
 use GuzzleHttp\Psr7\Response;
 use Http\Client\Exception\TransferException;
+use Allegro\REST\Token\ClientCredentialsTokenInterface;
+use Allegro\REST\Token\Credentials;
 
 final class ClientCredentialsTokenManagerTest extends TestCase
 {
@@ -29,7 +31,13 @@ final class ClientCredentialsTokenManagerTest extends TestCase
         $clientCredentialsTokenManager = new ClientCredentialsTokenManager($client);
 
         $this->expectException(TransferException::class);
-        $clientCredentialsTokenManager->getToken('clientId', 'clientSecret');
+        $clientCredentialsTokenManager->getClientCredentialsToken(
+            new Credentials([
+                'clientId' => 'clientId',
+                'clientSecret' => 'clientSecret',
+                'redirectUri' => 'redirectUri'
+            ])
+        );
         
     }
 
@@ -50,7 +58,13 @@ final class ClientCredentialsTokenManagerTest extends TestCase
         $clientCredentialsTokenManager = new ClientCredentialsTokenManager($client);
 
         $this->expectException(TransferException::class);
-        $clientCredentialsTokenManager->getToken('clientId', 'clientSecret');
+        $clientCredentialsTokenManager->getClientCredentialsToken(
+            new Credentials([
+                'clientId' => 'clientId',
+                'clientSecret' => 'clientSecret',
+                'redirectUri' => 'redirectUri'
+            ])
+        );
         
     }
 
@@ -69,10 +83,16 @@ final class ClientCredentialsTokenManagerTest extends TestCase
 
         $clientCredentialsTokenManager = new ClientCredentialsTokenManager($client);
 
-        $token = $clientCredentialsTokenManager->getToken('clientId', 'clientSecret');
+        $token = $clientCredentialsTokenManager->getClientCredentialsToken(
+            new Credentials([
+                'clientId' => 'clientId',
+                'clientSecret' => 'clientSecret',
+                'redirectUri' => 'redirectUri'
+            ])
+        );
 
         $this->assertInstanceOf(
-            Token::class,
+            ClientCredentialsTokenInterface::class,
             $token
         );
         $this->assertEquals($accessToken, $token->getAccessToken());
