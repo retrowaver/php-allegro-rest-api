@@ -1,13 +1,18 @@
 <?php
 namespace Allegro\REST\Traits;
 
-trait HttpBuildQuery
+trait HttpBuildQueryTrait
 {
     /**
+     * Generate URL-encoded query string
+     * 
+     * Native PHP's `http_build_query` method that's been altered to be friendly
+     * with Allegro API. See #6 and #13 on original repo.
+     * 
      * @param array $data
      * @return string
      */
-    function httpBuildQuery($data)
+    protected function httpBuildQuery(array $data): string
     {
         // Change booleans to strings ("true" / "false")
         foreach ($data as $key => $value) {

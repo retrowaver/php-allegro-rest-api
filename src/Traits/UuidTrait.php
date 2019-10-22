@@ -1,12 +1,14 @@
 <?php
 namespace Allegro\REST\Traits;
 
-trait Uuid
+trait UuidTrait
 {
     /**
+     * Generates random UUID (version 4)
+     * 
      * @return string
      */
-    function getUuid(): string
+    protected function getUuid(): string
     {
         return sprintf(
             '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',

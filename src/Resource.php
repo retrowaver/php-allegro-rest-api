@@ -6,13 +6,13 @@ use Http\Client\HttpClient;
 use Http\Message\MessageFactory;
 use Http\Client\Exception\TransferException;
 use Allegro\REST\Token\Token;
-use Allegro\REST\Traits\HttpBuildQuery;
-use Allegro\REST\Traits\Uuid;
+use Allegro\REST\Traits\HttpBuildQueryTrait;
+use Allegro\REST\Traits\UuidTrait;
 
 class Resource
 {
-    use HttpBuildQuery;
-    use Uuid;
+    use HttpBuildQueryTrait;
+    use UuidTrait;
 
     /**
      * @var string
