@@ -1,9 +1,6 @@
 <?php
 namespace Allegro\REST\Token\TokenManager;
 
-
-/// some of these might not be neeeded
-use Allegro\REST\Token\Token;
 use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Message\MessageFactory;
@@ -12,11 +9,9 @@ use Http\Client\Exception\TransferException;
 use Http\Client\Exception\HttpException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-
 use Allegro\REST\Token\CredentialsInterface;
 
-
-class BaseTokenManager
+abstract class BaseTokenManager
 {
     const TOKEN_URI = 'https://allegro.pl/auth/oauth/token';
     const AUTH_URI = 'https://allegro.pl/auth/oauth/authorize';

@@ -34,10 +34,10 @@ final class SandboxClientCredentialsTokenManagerTest extends TestCase
     {
         $client = new Client;
         $clientCredentialsTokenManager = new SandboxClientCredentialsTokenManager($client);
-        $credentials = require(__DIR__ . '/../config.php');
+        $config = require(__DIR__ . '/../config.php');
 
         $token = $clientCredentialsTokenManager->getClientCredentialsToken(
-            new Credentials($credentials)
+            $config['credentials']
         );
 
         $this->assertInstanceOf(
