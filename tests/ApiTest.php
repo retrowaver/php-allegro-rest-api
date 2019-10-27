@@ -81,7 +81,7 @@ final class ApiTest extends TestCase
         );
     }
 
-    public function testAddCustomHeaderAddsCustomHeader()
+    public function testAddCustomHeadersAddsCustomHeaders()
     {
         $api = new Api(
             null,
@@ -91,14 +91,14 @@ final class ApiTest extends TestCase
         );
 
         $before = $api->getCustomHeaders();
-        $api->addCustomHeader(['Some-Header' => 'some_value']);
+        $api->addCustomHeaders(['Some-Header' => 'some_value']);
         $after = $api->getCustomHeaders();
 
         $this->assertNotEqualsCanonicalizing($before, $after);
         $this->assertEquals('some_value', $after['Some-Header']);
     }
 
-    public function testAddCustomHeaderDoesntReplaceExistingCustomHeader()
+    public function testAddCustomHeadersDoesntReplaceExistingCustomHeader()
     {
         $api = new Api(
             null,
@@ -107,9 +107,9 @@ final class ApiTest extends TestCase
             []
         );
 
-        $api->addCustomHeader(['Some-Header' => 'some_value']);
+        $api->addCustomHeaders(['Some-Header' => 'some_value']);
         $before = $api->getCustomHeaders();
-        $api->addCustomHeader(['Some-Header' => 'new_value']);
+        $api->addCustomHeaders(['Some-Header' => 'new_value']);
         $after = $api->getCustomHeaders();
 
         $this->assertEqualsCanonicalizing($before, $after);

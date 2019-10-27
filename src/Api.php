@@ -99,12 +99,12 @@ class Api extends Resource
     }
 
     /**
-     * @param array $customHeader
+     * @param array $customHeaders
      * @return self
      */
-    public function addCustomHeader(array $customHeader): self
+    public function addCustomHeaders(array $customHeaders): self
     {
-        $this->customHeaders += $customHeader;
+        $this->customHeaders += $customHeaders;
         return $this;
     }
 
