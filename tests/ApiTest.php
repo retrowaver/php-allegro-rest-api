@@ -26,7 +26,7 @@ final class ApiTest extends TestCase
         $api = new Api(
             $client
         );
-        $api->setToken(new ClientCredentialsToken('accessToken'));
+        $api->setToken(new ClientCredentialsToken('accessToken', 12345));
 
         $api->sale->{'offer-publication-commands'}()->put([]);
         $this->assertRegExp(

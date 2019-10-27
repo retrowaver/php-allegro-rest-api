@@ -29,7 +29,7 @@ class AuthorizationCodeTokenManager extends RefreshableTokenManager implements A
 
         $response = $this->client->sendRequest($request);
 
-        $this->validateGetTokenResponse($request, $response, ['access_token', 'refresh_token']);
+        $this->validateGetTokenResponse($request, $response, ['access_token', 'refresh_token', 'expires_in']);
         return $this->createAuthorizationCodeTokenFromResponse($response);
     }
 
@@ -48,6 +48,10 @@ class AuthorizationCodeTokenManager extends RefreshableTokenManager implements A
         ResponseInterface $response
     ): AuthorizationCodeTokenInterface {
         $decoded = json_decode((string)$response->getBody());
-        return new AuthorizationCodeToken($decoded->access_token, $decoded->refresh_token);
+        return new AuthorizationCodeToken(
+            $decoded->access_token,
+            $decoded->refresh_token,
+            $decoded->expires_in
+        );
     }
 }

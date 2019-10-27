@@ -94,7 +94,7 @@ final class AuthorizationCodeTokenManagerTest extends TestCase
     /**
      * @dataProvider validResponses
      */
-    public function testGetAuthCodeTokenGetsTokenOnValidResponse($body, $accessToken, $refreshToken): void
+    public function testGetAuthCodeTokenGetsTokenOnValidResponse($body, $accessToken, $refreshToken, $expiresIn): void
     {
         $client = new Client;
         $client->addResponse(new Response(200, [], $body));
@@ -116,26 +116,27 @@ final class AuthorizationCodeTokenManagerTest extends TestCase
         );
         $this->assertEquals($accessToken, $token->getAccessToken());
         $this->assertEquals($refreshToken, $token->getRefreshToken());
+        $this->assertEquals($expiresIn, $token->getExpiresIn());
     }
 
     public function validResponses(): array
     {
         return [
-            ['{"access_token":"accessToken","refresh_token":"refreshToken"}', 'accessToken', 'refreshToken']
+            ['{"access_token":"accessToken","refresh_token":"refreshToken","expires_in":12345}', 'accessToken', 'refreshToken', 12345]
         ];
     }
 
     /**
      * @dataProvider validRefreshTokenResponses
      */
-    public function testRefreshTokenRefreshesTokenOnValidResponse($body, $accessToken, $refreshToken)
+    public function testRefreshTokenRefreshesTokenOnValidResponse($body, $accessToken, $refreshToken, $expiresIn)
     {
         $client = new Client;
         $client->addResponse(new Response(200, [], $body));
 
         $tokenManager = new AuthorizationCodeTokenManager($client);
 
-        $token = new AuthorizationCodeToken('oldAccessToken', 'oldRefreshToken');
+        $token = new AuthorizationCodeToken('oldAccessToken', 'oldRefreshToken', 12345);
         $tokenManager->refreshToken(
             new Credentials([
                 'clientId' => 'clientId',
@@ -147,12 +148,13 @@ final class AuthorizationCodeTokenManagerTest extends TestCase
 
         $this->assertEquals($accessToken, $token->getAccessToken());
         $this->assertEquals($refreshToken, $token->getRefreshToken());
+        $this->assertEquals($expiresIn, $token->getExpiresIn());
     }
 
     public function validRefreshTokenResponses(): array
     {
         return [
-            ['{"access_token":"accessToken","refresh_token":"refreshToken"}', 'accessToken', 'refreshToken']
+            ['{"access_token":"accessToken","refresh_token":"refreshToken","expires_in":12345}', 'accessToken', 'refreshToken', 12345]
         ];
     }
 }

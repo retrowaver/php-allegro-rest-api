@@ -27,7 +27,7 @@ final class SandboxAuthorizationCodeTokenManagerTest extends TestCase
         $this->expectException(TransferException::class);
         $authorizationCodeTokenManager->refreshToken(
             new Credentials([]),
-            new AuthorizationCodeToken('accessToken', 'refreshToken')
+            new AuthorizationCodeToken('accessToken', 'refreshToken', 12345)
         );
     }
 }

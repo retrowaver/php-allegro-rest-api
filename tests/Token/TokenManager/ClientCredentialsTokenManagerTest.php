@@ -76,7 +76,7 @@ final class ClientCredentialsTokenManagerTest extends TestCase
     /**
      * @dataProvider validResponses
      */
-    public function testGetTokenGetsTokenOnValidResponse($body, $accessToken): void
+    public function testGetTokenGetsTokenOnValidResponse($body, $accessToken, $expiresIn): void
     {
         $client = new Client;
         $client->addResponse(new Response(200, [], $body));
@@ -96,12 +96,13 @@ final class ClientCredentialsTokenManagerTest extends TestCase
             $token
         );
         $this->assertEquals($accessToken, $token->getAccessToken());
+        $this->assertEquals($expiresIn, $token->getExpiresIn());
     }
 
     public function validResponses(): array
     {
         return [
-            ['{"access_token":"accessToken"}', 'accessToken']
+            ['{"access_token":"accessToken","expires_in":12345}', 'accessToken', 12345]
         ];
     }
 }

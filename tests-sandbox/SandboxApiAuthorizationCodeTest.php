@@ -23,7 +23,8 @@ final class SandboxApiAuthorizationCodeTest extends TestCase
             $this->api->setToken(
                 new AuthorizationCodeToken(
                     $config['accessToken'],
-                    'refreshToken' // placeholder value because it's not used in tests
+                    'refreshToken', // placeholder value because it's not used in tests
+                    12345 // placeholder
                 )
             );
         }

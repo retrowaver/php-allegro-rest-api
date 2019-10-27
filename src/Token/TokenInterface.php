@@ -13,4 +13,15 @@ interface TokenInterface
      * @return TokenInterface
      */
     public function setAccessToken(string $accessToken): TokenInterface;
+
+    /**
+     * @return int
+     */
+    public function getExpiresIn(): int;
+
+    /**
+     * @param int $expiresIn
+     * @return TokenInterface
+     */
+    public function setExpiresIn(int $expiresIn): TokenInterface;
 }

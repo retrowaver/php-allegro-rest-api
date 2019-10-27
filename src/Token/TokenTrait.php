@@ -7,7 +7,12 @@ trait TokenTrait
      * @var string
      */
     protected $accessToken;
-    
+
+    /**
+     * @var int
+     */
+    protected $expiresIn;
+     
     /**
      * @return string
      */
@@ -23,6 +28,24 @@ trait TokenTrait
     public function setAccessToken(string $accessToken): TokenInterface
     {
         $this->accessToken = $accessToken;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getExpiresIn(): int
+    {
+        return $this->expiresIn;
+    }
+
+    /**
+     * @param int $expiresIn
+     * @return TokenInterface
+     */
+    public function setExpiresIn(int $expiresIn): TokenInterface
+    {
+        $this->expiresIn = $expiresIn;
         return $this;
     }
 }

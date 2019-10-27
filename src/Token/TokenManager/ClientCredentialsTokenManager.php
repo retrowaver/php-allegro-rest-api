@@ -19,7 +19,7 @@ class ClientCredentialsTokenManager extends BaseTokenManager implements ClientCr
 
         $response = $this->client->sendRequest($request);
 
-        $this->validateGetTokenResponse($request, $response, ['access_token']);
+        $this->validateGetTokenResponse($request, $response, ['access_token', 'expires_in']);
         return $this->createClientCredentialsTokenFromResponse($response);
     }
 
@@ -34,6 +34,6 @@ class ClientCredentialsTokenManager extends BaseTokenManager implements ClientCr
         ResponseInterface $response
     ): ClientCredentialsTokenInterface {
         $decoded = json_decode((string)$response->getBody());
-        return new ClientCredentialsToken($decoded->access_token);
+        return new ClientCredentialsToken($decoded->access_token, $decoded->expires_in);
     }
 }

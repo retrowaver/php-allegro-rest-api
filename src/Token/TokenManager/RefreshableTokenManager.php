@@ -19,7 +19,7 @@ class RefreshableTokenManager extends BaseTokenManager implements RefreshableTok
 
         $response = $this->client->sendRequest($request);
 
-        $this->validateGetTokenResponse($request, $response, ['access_token', 'refresh_token']);
+        $this->validateGetTokenResponse($request, $response, ['access_token', 'refresh_token', 'expires_in']);
         return $this->updateRefreshedTokenFromResponse($token, $response);
     }
 
@@ -43,6 +43,7 @@ class RefreshableTokenManager extends BaseTokenManager implements RefreshableTok
         return $token
             ->setAccessToken($decoded->access_token)
             ->setRefreshToken($decoded->refresh_token)
+            ->setExpiresIn($decoded->expires_in)
         ;
     }
 }
