@@ -49,4 +49,69 @@ final class ApiTest extends TestCase
             $client->getLastRequest()->getUri()->getPath()
         );
     }
+
+    public function testGetCustomHeadersReturnsValuesFromConst()
+    {
+        $api = new Api(
+            null,
+            null,
+            new ClientCredentialsToken('accessToken'),
+            []
+        );
+
+        $this->assertEqualsCanonicalizing(
+            Api::CUSTOM_HEADERS,
+            $api->getCustomHeaders()
+        );
+    }
+
+    public function testSetCustomHeadersReplacesCustomHeaders()
+    {
+        $api = new Api(
+            null,
+            null,
+            new ClientCredentialsToken('accessToken'),
+            []
+        );
+
+        $api->setCustomHeaders(['Header' => 'value']);
+        $this->assertEqualsCanonicalizing(
+            ['Header' => 'value'],
+            $api->getCustomHeaders()
+        );
+    }
+
+    public function testAddCustomHeaderAddsCustomHeader()
+    {
+        $api = new Api(
+            null,
+            null,
+            new ClientCredentialsToken('accessToken'),
+            []
+        );
+
+        $before = $api->getCustomHeaders();
+        $api->addCustomHeader(['Some-Header' => 'some_value']);
+        $after = $api->getCustomHeaders();
+
+        $this->assertNotEqualsCanonicalizing($before, $after);
+        $this->assertEquals('some_value', $after['Some-Header']);
+    }
+
+    public function testAddCustomHeaderDoesntReplaceExistingCustomHeader()
+    {
+        $api = new Api(
+            null,
+            null,
+            new ClientCredentialsToken('accessToken'),
+            []
+        );
+
+        $api->addCustomHeader(['Some-Header' => 'some_value']);
+        $before = $api->getCustomHeaders();
+        $api->addCustomHeader(['Some-Header' => 'new_value']);
+        $after = $api->getCustomHeaders();
+
+        $this->assertEqualsCanonicalizing($before, $after);
+    }
 }
