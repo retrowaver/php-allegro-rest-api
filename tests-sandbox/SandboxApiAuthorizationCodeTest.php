@@ -17,8 +17,10 @@ final class SandboxApiAuthorizationCodeTest extends TestCase
         if ($this->api === null) {
             $config = require(__DIR__ . '/config.php');
             $this->api = new Sandbox(
-                new Client,
-                null,
+                new Client
+            );
+
+            $this->api->setToken(
                 new AuthorizationCodeToken(
                     $config['accessToken'],
                     'refreshToken' // placeholder value because it's not used in tests

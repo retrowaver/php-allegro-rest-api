@@ -15,7 +15,6 @@ final class ApiTest extends TestCase
             new Api(
                 new Client,
                 null,
-                new ClientCredentialsToken('accessToken'),
                 []
             )
         );
@@ -25,11 +24,9 @@ final class ApiTest extends TestCase
     {
         $client = new Client;
         $api = new Api(
-            $client,
-            null,
-            new ClientCredentialsToken('accessToken'),
-            []
+            $client
         );
+        $api->setToken(new ClientCredentialsToken('accessToken'));
 
         $api->sale->{'offer-publication-commands'}()->put([]);
         $this->assertRegExp(
@@ -52,12 +49,7 @@ final class ApiTest extends TestCase
 
     public function testGetCustomHeadersReturnsValuesFromConst()
     {
-        $api = new Api(
-            null,
-            null,
-            new ClientCredentialsToken('accessToken'),
-            []
-        );
+        $api = new Api;
 
         $this->assertEqualsCanonicalizing(
             Api::CUSTOM_HEADERS,
@@ -67,12 +59,7 @@ final class ApiTest extends TestCase
 
     public function testSetCustomHeadersReplacesCustomHeaders()
     {
-        $api = new Api(
-            null,
-            null,
-            new ClientCredentialsToken('accessToken'),
-            []
-        );
+        $api = new Api;
 
         $api->setCustomHeaders(['Header' => 'value']);
         $this->assertEqualsCanonicalizing(
@@ -83,12 +70,7 @@ final class ApiTest extends TestCase
 
     public function testAddCustomHeadersAddsCustomHeaders()
     {
-        $api = new Api(
-            null,
-            null,
-            new ClientCredentialsToken('accessToken'),
-            []
-        );
+        $api = new Api;
 
         $before = $api->getCustomHeaders();
         $api->addCustomHeaders(['Some-Header' => 'some_value']);
@@ -100,12 +82,7 @@ final class ApiTest extends TestCase
 
     public function testAddCustomHeadersDoesntReplaceExistingCustomHeader()
     {
-        $api = new Api(
-            null,
-            null,
-            new ClientCredentialsToken('accessToken'),
-            []
-        );
+        $api = new Api;
 
         $api->addCustomHeaders(['Some-Header' => 'some_value']);
         $before = $api->getCustomHeaders();

@@ -52,13 +52,12 @@ class Api extends Resource
     /**
      * @param HttpClient|null $client
      * @param MessageFactory|null $messageFactory
-     * @param Token $token
+     * @param TokenInterface $token
      * @param MiddlewareInterface[] $middleware
      */
     public function __construct(
         ?HttpClient $client = null,
         ?MessageFactory $messageFactory = null,
-        TokenInterface $token,
         array $middleware = []
     ) {
         $this->client = new HttplugMiddlewareDecorator(
@@ -66,9 +65,26 @@ class Api extends Resource
             $middleware
         );
         $this->messageFactory = $messageFactory ?? MessageFactoryDiscovery::find();
-        $this->token = $token;
-        
+
         $this->setCustomHeaders(self::CUSTOM_HEADERS);
+    }
+
+    /**
+     * @param TokenInterface $token
+     * @return self
+     */
+    public function setToken(TokenInterface $token): self
+    {
+        $this->token = $token;
+        return $this;
+    }
+
+    /**
+     * @return TokenInterface
+     */
+    public function getToken(): TokenInterface
+    {
+        return $this->token;
     }
 
     /**

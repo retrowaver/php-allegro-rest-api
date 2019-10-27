@@ -14,10 +14,9 @@ final class SandboxApiClientCredentialsTest extends TestCase
     {
         $token = require(__DIR__ . '/cc_token.php');
         $api = new Sandbox(
-            new Client,
-            null,
-            $token
+            new Client
         );
+        $api->setToken($token);
 
         $response = $api->offers->listing->get(['phrase' => 'dell']);
 
