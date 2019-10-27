@@ -88,14 +88,6 @@ class Resource
     }
 
     /**
-     * @return array
-     */
-    public function getHeaders(): array
-    {
-        return $this->parent->getHeaders();
-    }
-
-    /**
      * @return bool
      */
     public function isCommand(): bool
@@ -192,5 +184,13 @@ class Resource
     protected function getMessageFactory(): MessageFactory
     {
         return $this->parent->getMessageFactory();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getHeaders(): array
+    {
+        return $this->parent->getHeaders();
     }
 }

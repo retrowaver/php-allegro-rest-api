@@ -24,7 +24,7 @@ class Api extends Resource
     /**
      * @var array
      */
-    const DEFAULT_HEADERS = [
+    const CUSTOM_HEADERS = [
         'Content-Type' => 'application/vnd.allegro.public.v1+json',
         'Accept' => 'application/vnd.allegro.public.v1+json'
     ];
@@ -47,7 +47,7 @@ class Api extends Resource
     /**
      * @var array
      */
-    protected $headers;
+    protected $customHeaders;
 
     /**
      * @param HttpClient|null $client
@@ -67,7 +67,8 @@ class Api extends Resource
         );
         $this->messageFactory = $messageFactory ?? MessageFactoryDiscovery::find();
         $this->token = $token;
-        $this->setHeaders(self::DEFAULT_HEADERS);
+        
+        $this->setCustomHeaders(self::CUSTOM_HEADERS);
     }
 
     /**
@@ -82,19 +83,27 @@ class Api extends Resource
     /**
      * @return array
      */
-    public function getHeaders(): array
+    public function getCustomHeaders(): array
     {
-        return ['Authorization' => 'Bearer ' . $this->token->getAccessToken()] + $this->headers;
+        return $this->customHeaders;
     }
 
     /**
-     * @param array $headers
+     * @param array $customHeaders
      * @return self
      */
-    public function setHeaders(array $headers): self
+    public function setCustomHeaders(array $customHeaders): self
     {
-        $this->headers = $headers;
+        $this->customHeaders = $customHeaders;
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getHeaders(): array
+    {
+        return ['Authorization' => 'Bearer ' . $this->token->getAccessToken()] + $this->customHeaders;
     }
 
     /**
