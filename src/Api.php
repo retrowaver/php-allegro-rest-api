@@ -91,7 +91,7 @@ class Api extends Resource
      * @param null|array $queryParams
      * @return string
      */
-    public function getUri(?array $queryParams = null): string
+    protected function getUri(?array $queryParams = null): string
     {
         return static::API_URI;
     }
