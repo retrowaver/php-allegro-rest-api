@@ -1,4 +1,7 @@
 <?php
+
+use Allegro\REST\Token\Credentials;
+
 return [
     'clientId' => '...',
     'clientSecret' => '...',
