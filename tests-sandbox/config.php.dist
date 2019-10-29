@@ -1,0 +1,10 @@
+<?php
+
+use Allegro\REST\Token\Credentials;
+
+return [
+    'clientId' => '...',
+    'clientSecret' => '...',
+    'redirectUri' => '...',
+    'accessToken' => '...' // for authorization code flow only
+];

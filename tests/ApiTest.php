@@ -1,56 +1,94 @@
 <?php
-require_once dirname(__DIR__) . '/vendor/autoload.php';
-require_once dirname(__DIR__) . '/src/Resource.php';
-require_once dirname(__DIR__) . '/src/Api.php';
 
 use PHPUnit\Framework\TestCase;
+use Http\Mock\Client;
+use Allegro\REST\Api;
+use Allegro\REST\Token\ClientCredentialsToken;
+use Allegro\REST\Token\Credentials;
 
-class ApiTest extends TestCase
+final class ApiTest extends TestCase
 {
-
-    function testGetUri()
+    public function testCanBeCreated(): void
     {
-        $api = new Allegro\REST\Api('eggs', 'spam', 'ham', 'beans');
-
-        $this->assertEquals('https://api.allegro.pl', $api->getUri());
-
-        $this->assertEquals('https://api.allegro.pl/categories',
-                            $api->categories->getUri());
-
-        $this->assertEquals('https://api.allegro.pl/categories/12',
-                            $api->categories(12)->getUri());
-    }
-
-    /**
-     * @dataProvider credentialsProvider
-     */
-    function testAuthorization($clientId, $clientSecret, $apiKey,
-                               $redirectUri, $accessToken, $refreshToken)
-    {
-        $api = new Allegro\REST\Api($clientId, $clientSecret, $apiKey,
-                                    $redirectUri, $accessToken, $refreshToken);
-
-        $expected = 'https://ssl.allegro.pl/auth/oauth/authorize' .
-                    "?response_type=code&client_id=$clientId" .
-                    "&api-key=$apiKey&redirect_uri=$redirectUri";
-
-        $this->assertEquals($expected, $api->getAuthorizationUri());
-
-        $this->assertEquals($accessToken, $api->getAccessToken());
-        $this->assertEquals($accessToken, $api->categories->getAccessToken());
-        $this->assertEquals($accessToken, $api->categories(123)->getAccessToken());
-
-        $this->assertEquals($apiKey, $api->getApiKey());
-        $this->assertEquals($apiKey, $api->categories->getApiKey());
-        $this->assertEquals($apiKey, $api->categories(123)->getApiKey());
-    }
-
-    function credentialsProvider()
-    {
-        return array(
-            array('eggs', 'spam', 'ham', 'beans', null, null),
-            array('wood', 'stone', 'clay', 'wool', 'wheat', 'depleted uranium'),
-            array('white', 'blue', 'black', 'red', 'green', 'colorless')
+        $this->assertInstanceOf(
+            Api::class,
+            new Api(
+                new Client,
+                null,
+                []
+            )
         );
+    }
+
+    public function testCommandPutRequestContainsCorrectUriPath()
+    {
+        $client = new Client;
+        $api = new Api(
+            $client
+        );
+        $api->setToken(new ClientCredentialsToken('accessToken', 12345));
+
+        $api->sale->{'offer-publication-commands'}()->put([]);
+        $this->assertRegExp(
+            '/^\/sale\/offer-publication-commands\/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/',
+            $client->getLastRequest()->getUri()->getPath()
+        );
+
+        $api->foo->bar->baz->{'foo-commands'}()->put([]);
+        $this->assertRegExp(
+            '/^\/foo\/bar\/baz\/foo-commands\/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/',
+            $client->getLastRequest()->getUri()->getPath()
+        );
+
+        $api->{'foo-commands'}('custom-uuid')->put([]);
+        $this->assertRegExp(
+            '/^\/foo-commands\/custom-uuid$/',
+            $client->getLastRequest()->getUri()->getPath()
+        );
+    }
+
+    public function testGetCustomHeadersReturnsValuesFromConst()
+    {
+        $api = new Api;
+
+        $this->assertEqualsCanonicalizing(
+            Api::CUSTOM_HEADERS,
+            $api->getCustomHeaders()
+        );
+    }
+
+    public function testSetCustomHeadersReplacesCustomHeaders()
+    {
+        $api = new Api;
+
+        $api->setCustomHeaders(['Header' => 'value']);
+        $this->assertEqualsCanonicalizing(
+            ['Header' => 'value'],
+            $api->getCustomHeaders()
+        );
+    }
+
+    public function testAddCustomHeadersAddsCustomHeaders()
+    {
+        $api = new Api;
+
+        $before = $api->getCustomHeaders();
+        $api->addCustomHeaders(['Some-Header' => 'some_value']);
+        $after = $api->getCustomHeaders();
+
+        $this->assertNotEqualsCanonicalizing($before, $after);
+        $this->assertEquals('some_value', $after['Some-Header']);
+    }
+
+    public function testAddCustomHeadersDoesntReplaceExistingCustomHeader()
+    {
+        $api = new Api;
+
+        $api->addCustomHeaders(['Some-Header' => 'some_value']);
+        $before = $api->getCustomHeaders();
+        $api->addCustomHeaders(['Some-Header' => 'new_value']);
+        $after = $api->getCustomHeaders();
+
+        $this->assertEqualsCanonicalizing($before, $after);
     }
 }

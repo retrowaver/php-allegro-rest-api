@@ -1,23 +1,30 @@
 {
-    "name": "retrowaver/allegro-rest-api",
-    "description": "Simple PHP interface for Allegro REST API. Forked from github.com/Wiatrogon/php-allegro-rest-api",
+    "name": "retrowaver/allegro-rest-api-v2",
+    "description": "Second version of a simple interface for Allegro REST API resources. Built on top of https://github.com/Wiatrogon/php-allegro-rest-api, which was rewritten for the most part.",
     "license": "MIT",
+    "type": "library",
     "authors": [
+        {
+            "name": "retrowaver"
+        },
         {
             "name": "Piotr Jakubik",
             "email": "wiatrogon@gmail.com"
-        },
-        {
-            "name": "retrowaver"
         }
     ],
     "keywords" : [
         "allegro",
         "rest",
-        "php"
+        "php",
+        "api"
     ],
     "require": {
-        "php": ">=5.3"
+        "php": ">=7.2",
+        "psr/http-message": "^1.0",
+        "php-http/client-implementation": "^1.0",
+        "php-http/httplug": "^2.0",
+        "php-http/message-factory": "^1.0",
+        "php-http/discovery": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -25,6 +32,10 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7"
+        "phpunit/phpunit": "^8",
+        "php-http/mock-client": "^1.0",
+        "php-http/message": "^1.0",
+        "guzzlehttp/psr7": "^1.0",
+        "php-http/guzzle6-adapter": "^2.0"
     }
 }

@@ -1,175 +1,18 @@
 <?php
 namespace Allegro\REST;
 
+use Psr\Http\Message\ResponseInterface;
+use Http\Client\HttpClient;
+use Http\Message\MessageFactory;
+use Http\Client\Exception\TransferException;
+use Allegro\REST\Token\Token;
+use Allegro\REST\Traits\HttpBuildQueryTrait;
+use Allegro\REST\Traits\UuidTrait;
+
 class Resource
 {
-
-    /**
-     * Resource constructor.
-     * @param string $id
-     * @param Resource $parent
-     */
-    public function __construct($id, Resource $parent)
-    {
-        $this->id = $id;
-        $this->parent = $parent;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAccessToken()
-    {
-        return $this->parent->getAccessToken();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getApiKey()
-    {
-        return $this->parent->getApiKey();
-    }
-
-    /**
-     * @return string
-     */
-    public function getUri()
-    {
-        return $this->parent->getUri() . '/' . $this->id;
-    }
-
-    /**
-     * @return Commands
-     */
-    public function commands()
-    {
-        return new Commands($this);
-    }
-
-    /**
-     * @param null|array $data
-     * @return bool|string
-     */
-    public function get($data = null)
-    {
-        $uri = $this->getUri();
-
-        if ($data !== null) {
-            $uri .= '?';
-            $uri .= $this->httpBuildQuery($data);
-        }
-
-        return $this->sendApiRequest($uri, 'GET');
-    }
-
-    /**
-     * @param array $data
-     * @return bool|string
-     */
-    public function put($data)
-    {
-        return $this->sendApiRequest($this->getUri(), 'PUT', $data);
-    }
-
-    /**
-     * @param array $data
-     * @return bool|string
-     */
-    public function post($data)
-    {
-        return $this->sendApiRequest($this->getUri(), 'POST', $data);
-    }
-
-    /**
-     * @param null|array $data
-     * @return bool|string
-     */
-    public function delete($data = null)
-    {
-        $uri = $this->getUri();
-
-        if ($data !== null) {
-            $uri .= '?';
-            $uri .= $this->httpBuildQuery($data);
-        }
-
-        return $this->sendApiRequest($uri, 'DELETE');
-    }
-
-    public function __get($name)
-    {
-        return new Resource($name, $this);
-    }
-
-    public function __call($name, $args)
-    {
-        $id = array_shift($args);
-        $collection = new Resource($name, $this);
-        return new Resource($id, $collection);
-    }
-
-    /**
-     * @param string $url
-     * @param string $method
-     * @param array $data
-     * @return bool|string
-     */
-    protected function sendApiRequest($url, $method, $data = array())
-    {
-        $token = $this->getAccessToken();
-        $key = $this->getApiKey();
-
-        $headers = array(
-            "Authorization: Bearer $token",
-            "Api-Key: $key",
-            "Content-Type: application/vnd.allegro.public.v1+json",
-            "Accept: application/vnd.allegro.public.v1+json"
-        );
-
-        $data = json_encode($data);
-
-        return $this->sendHttpRequest($url, $method, $headers, $data);
-    }
-
-    /**
-     * @param string $url
-     * @param string $method
-     * @param array $headers
-     * @param string $data
-     * @return bool|string
-     */
-    protected function sendHttpRequest($url, $method, $headers = array(), $data = '')
-    {
-        $options = array(
-            'http' => array(
-                'method' => $method,
-                'header' => implode("\r\n", $headers),
-                'content' => $data,
-                'ignore_errors' => true
-            )
-        );
-
-        $context = stream_context_create($options);
-
-        return file_get_contents($url, false, $context);
-    }
-
-    /**
-     * @param array $data
-     * @return string
-     */
-    protected function httpBuildQuery($data)
-    {
-        // Change booleans to strings ("true" / "false")
-        foreach ($data as $key => $value) {
-            if (gettype($value) === 'boolean') {
-                $data[$key] = var_export($value, true);
-            }
-        }
-
-        return preg_replace('/%5B\d+%5D/', '', http_build_query($data));
-    }
+    use HttpBuildQueryTrait;
+    use UuidTrait;
 
     /**
      * @var string
@@ -180,4 +23,174 @@ class Resource
      * @var Resource
      */
     private $parent;
+
+    /**
+     * Resource constructor.
+     * @param string $id
+     * @param Resource $parent
+     */
+    public function __construct(string $id, Resource $parent)
+    {
+        $this->id = $id;
+        $this->parent = $parent;
+    }
+
+    /**
+     * @param string $name
+     * @return Resource
+     */
+    public function __get(string $name): Resource
+    {
+        return new Resource($name, $this);
+    }
+
+    /**
+     * @param string $name
+     * @param array $args
+     * @return Resource
+     */
+    public function __call(string $name, array $args): Resource
+    {
+        $previous = new Resource($name, $this);
+        $id = array_shift($args);
+
+        if ($previous->isCommand()) {
+            return new Resource(
+                $id ?? $this->getUuid(),
+                $previous
+            );
+        }
+
+        return new Resource($id, $previous);
+    }
+
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param null|array $queryParams
+     * @return string
+     */
+    protected function getUri(?array $queryParams = null): string
+    {
+        $uri = $this->parent->getUri() . '/' . $this->id;
+
+        if (!empty($queryParams)) {
+            $uri .= '?' . $this->httpBuildQuery($queryParams);
+        }
+
+        return $uri;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCommand(): bool
+    {
+        return (substr($this->getId(), -9) === '-commands');
+    }
+
+    /**
+     * @param null|array $queryParams
+     * @param array $headers
+     * @throws TransferException on error
+     * @return ResponseInterface
+     */
+    public function get(?array $queryParams = null, array $headers = []): ResponseInterface
+    {
+        return $this->sendApiRequest(
+            $this->getUri($queryParams),
+            'GET',
+            $headers
+        );
+    }
+
+    /**
+     * @param array $data
+     * @param array $headers
+     * @throws TransferException on error
+     * @return ResponseInterface
+     */
+    public function put(?array $data, array $headers = []): ResponseInterface
+    {
+        return $this->sendApiRequest($this->getUri(), 'PUT', $headers, $data);
+    }
+
+    /**
+     * @param array|string|null $data
+     * @param array $headers
+     * @throws TransferException on error
+     * @return ResponseInterface
+     */
+    public function post($data, array $headers = [])
+    {
+        return $this->sendApiRequest($this->getUri(), 'POST', $headers, $data);
+    }
+
+    /**
+     * @param null|array $queryParams
+     * @param array $headers
+     * @throws TransferException on error
+     * @return ResponseInterface
+     */
+    public function delete(?array $queryParams = null, array $headers = [])
+    {
+        return $this->sendApiRequest(
+            $this->getUri($queryParams),
+            'DELETE',
+            $headers
+        );
+    }
+
+    /**
+     * @param string $url
+     * @param string $method
+     * @param array $headers
+     * @param array|string|null $data
+     * @return ResponseInterface
+     */
+    protected function sendApiRequest(
+        string $url,
+        string $method,
+        array $headers = [],
+        $data = null
+    ): ResponseInterface {
+        return $this->getClient()->sendRequest(
+            $this->getMessageFactory()->createRequest(
+                $method,
+                $url,
+                $headers + $this->getHeaders(),
+                is_array($data) ? json_encode($data) : $data
+            )
+        );
+    }
+
+    /**
+     * @return HttpClient
+     */
+    protected function getClient(): HttpClient
+    {
+        return $this->parent->getClient();
+    }
+
+    /**
+     * @return MessageFactory
+     */
+    protected function getMessageFactory(): MessageFactory
+    {
+        return $this->parent->getMessageFactory();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getHeaders(): array
+    {
+        return $this->parent->getHeaders();
+    }
 }
