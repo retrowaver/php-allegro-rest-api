@@ -1,9 +1,9 @@
 <?php
-namespace Allegro\REST\Token\TokenManager;
+namespace Retrowaver\Allegro\REST\Token\TokenManager;
 
-use Allegro\REST\Token\ClientCredentialsToken;
-use Allegro\REST\Token\ClientCredentialsTokenInterface;
-use Allegro\REST\Token\CredentialsInterface;
+use Retrowaver\Allegro\REST\Token\ClientCredentialsToken;
+use Retrowaver\Allegro\REST\Token\ClientCredentialsTokenInterface;
+use Retrowaver\Allegro\REST\Token\CredentialsInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class ClientCredentialsTokenManager extends BaseTokenManager implements ClientCredentialsTokenManagerInterface

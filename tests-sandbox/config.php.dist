@@ -1,10 +1,12 @@
 <?php
 
-use Allegro\REST\Token\Credentials;
+use Retrowaver\Allegro\REST\Token\Credentials;
 
 return [
-    'clientId' => '...',
-    'clientSecret' => '...',
-    'redirectUri' => '...',
+    'credentials' => new Credentials([
+        'clientId' => '...',
+        'clientSecret' => '...',
+        'redirectUri' => '...'
+    ]),
     'accessToken' => '...' // for authorization code flow only
 ];

@@ -1,5 +1,5 @@
 <?php
-namespace Allegro\REST\Token;
+namespace Retrowaver\Allegro\REST\Token;
 
 trait TokenTrait
 {

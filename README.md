@@ -191,7 +191,7 @@ PHP Allegro REST API has a middleware feature, that allows you to alter requests
 At this point, there's only one 'real' built-in middleware - `ImageUploadMiddleware` that alters request's URI in case of image upload request (from standard `api.allegro.pl` to image upload-specific `upload.allegro.pl`).
 
 ### 6.1. Create your own middleware
-You can create your own middleware by creating a class implementing `Allegro\REST\Middleware\MiddlewareInterface` and passing it into API constructor:
+You can create your own middleware by creating a class implementing `Retrowaver\Allegro\REST\Middleware\MiddlewareInterface` and passing it into API constructor:
 
 ```php
 $middleware = [

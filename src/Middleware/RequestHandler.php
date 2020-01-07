@@ -1,5 +1,5 @@
 <?php
-namespace Allegro\REST\Middleware;
+namespace Retrowaver\Allegro\REST\Middleware;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;

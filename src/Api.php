@@ -1,13 +1,13 @@
 <?php
-namespace Allegro\REST;
+namespace Retrowaver\Allegro\REST;
 
 use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Message\MessageFactory;
 use Http\Discovery\MessageFactoryDiscovery;
-use Allegro\REST\Token\TokenInterface;
-use Allegro\REST\Middleware\HttplugMiddlewareDecorator;
-use Allegro\REST\Middleware\MiddlewareInterface;
+use Retrowaver\Allegro\REST\Token\TokenInterface;
+use Retrowaver\Allegro\REST\Middleware\HttplugMiddlewareDecorator;
+use Retrowaver\Allegro\REST\Middleware\MiddlewareInterface;
 
 class Api extends Resource
 {

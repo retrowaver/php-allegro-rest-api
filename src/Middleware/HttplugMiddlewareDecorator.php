@@ -1,11 +1,11 @@
 <?php
-namespace Allegro\REST\Middleware;
+namespace Retrowaver\Allegro\REST\Middleware;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Http\Client\HttpClient;
-use Allegro\REST\Middleware\Middleware\BaseMiddleware;
-use Allegro\REST\Middleware\Middleware\ImageUploadMiddleware;
+use Retrowaver\Allegro\REST\Middleware\Middleware\BaseMiddleware;
+use Retrowaver\Allegro\REST\Middleware\Middleware\ImageUploadMiddleware;
 
 /**
  * HTTPlug middleware decorator

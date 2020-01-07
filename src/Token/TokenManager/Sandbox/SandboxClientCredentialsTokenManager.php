@@ -1,7 +1,7 @@
 <?php
-namespace Allegro\REST\Token\TokenManager\Sandbox;
+namespace Retrowaver\Allegro\REST\Token\TokenManager\Sandbox;
 
-use Allegro\REST\Token\TokenManager\ClientCredentialsTokenManager;
+use Retrowaver\Allegro\REST\Token\TokenManager\ClientCredentialsTokenManager;
 
 class SandboxClientCredentialsTokenManager extends ClientCredentialsTokenManager
 {

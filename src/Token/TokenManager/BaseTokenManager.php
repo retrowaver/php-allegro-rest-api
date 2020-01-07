@@ -1,5 +1,5 @@
 <?php
-namespace Allegro\REST\Token\TokenManager;
+namespace Retrowaver\Allegro\REST\Token\TokenManager;
 
 use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
@@ -9,7 +9,7 @@ use Http\Client\Exception\TransferException;
 use Http\Client\Exception\HttpException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Allegro\REST\Token\CredentialsInterface;
+use Retrowaver\Allegro\REST\Token\CredentialsInterface;
 
 abstract class BaseTokenManager
 {

@@ -2,9 +2,9 @@
 
 use PHPUnit\Framework\TestCase;
 use Http\Mock\Client;
-use Allegro\REST\Api;
-use Allegro\REST\Token\ClientCredentialsToken;
-use Allegro\REST\Token\Credentials;
+use Retrowaver\Allegro\REST\Api;
+use Retrowaver\Allegro\REST\Token\ClientCredentialsToken;
+use Retrowaver\Allegro\REST\Token\Credentials;
 
 final class ApiTest extends TestCase
 {

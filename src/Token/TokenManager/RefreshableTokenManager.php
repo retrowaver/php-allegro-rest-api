@@ -1,9 +1,9 @@
 <?php
-namespace Allegro\REST\Token\TokenManager;
+namespace Retrowaver\Allegro\REST\Token\TokenManager;
 
 use Psr\Http\Message\ResponseInterface;
-use Allegro\REST\Token\CredentialsInterface;
-use Allegro\REST\Token\RefreshableTokenInterface;
+use Retrowaver\Allegro\REST\Token\CredentialsInterface;
+use Retrowaver\Allegro\REST\Token\RefreshableTokenInterface;
 
 class RefreshableTokenManager extends BaseTokenManager implements RefreshableTokenManagerInterface
 {

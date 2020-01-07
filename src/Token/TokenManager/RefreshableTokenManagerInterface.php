@@ -1,8 +1,8 @@
 <?php
-namespace Allegro\REST\Token\TokenManager;
+namespace Retrowaver\Allegro\REST\Token\TokenManager;
 
-use Allegro\REST\Token\CredentialsInterface;
-use Allegro\REST\Token\RefreshableTokenInterface;
+use Retrowaver\Allegro\REST\Token\CredentialsInterface;
+use Retrowaver\Allegro\REST\Token\RefreshableTokenInterface;
 use Http\Client\Exception\TransferException;
 use Http\Client\Exception\HttpException;
 

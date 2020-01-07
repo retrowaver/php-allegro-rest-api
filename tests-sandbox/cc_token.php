@@ -1,7 +1,7 @@
 <?php
 use Http\Adapter\Guzzle6\Client;
-use Allegro\REST\Token\TokenManager\Sandbox\SandboxClientCredentialsTokenManager;
-use Allegro\REST\Token\Credentials;
+use Retrowaver\Allegro\REST\Token\TokenManager\Sandbox\SandboxClientCredentialsTokenManager;
+use Retrowaver\Allegro\REST\Token\Credentials;
 
 $config = require(__DIR__ . '/config.php');
 

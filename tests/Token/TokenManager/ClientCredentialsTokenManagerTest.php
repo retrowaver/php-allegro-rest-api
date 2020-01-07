@@ -2,13 +2,13 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use Allegro\REST\Token\TokenManager\ClientCredentialsTokenManager;
-use Allegro\REST\Token\Token;
+use Retrowaver\Allegro\REST\Token\TokenManager\ClientCredentialsTokenManager;
+use Retrowaver\Allegro\REST\Token\Token;
 use Http\Mock\Client;
 use GuzzleHttp\Psr7\Response;
 use Http\Client\Exception\TransferException;
-use Allegro\REST\Token\ClientCredentialsTokenInterface;
-use Allegro\REST\Token\Credentials;
+use Retrowaver\Allegro\REST\Token\ClientCredentialsTokenInterface;
+use Retrowaver\Allegro\REST\Token\Credentials;
 
 final class ClientCredentialsTokenManagerTest extends TestCase
 {

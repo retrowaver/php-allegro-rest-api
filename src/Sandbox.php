@@ -1,5 +1,5 @@
 <?php
-namespace Allegro\REST;
+namespace Retrowaver\Allegro\REST;
 
 class Sandbox extends Api
 {

@@ -1,9 +1,9 @@
 <?php
-namespace Allegro\REST\Token\TokenManager;
+namespace Retrowaver\Allegro\REST\Token\TokenManager;
 
-use Allegro\REST\Token\AuthorizationCodeToken;
-use Allegro\REST\Token\AuthorizationCodeTokenInterface;
-use Allegro\REST\Token\CredentialsInterface;
+use Retrowaver\Allegro\REST\Token\AuthorizationCodeToken;
+use Retrowaver\Allegro\REST\Token\AuthorizationCodeTokenInterface;
+use Retrowaver\Allegro\REST\Token\CredentialsInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class AuthorizationCodeTokenManager extends RefreshableTokenManager implements AuthorizationCodeTokenManagerInterface

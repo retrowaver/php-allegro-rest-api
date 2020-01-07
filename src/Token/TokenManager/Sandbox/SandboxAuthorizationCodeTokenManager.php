@@ -1,7 +1,7 @@
 <?php
-namespace Allegro\REST\Token\TokenManager\Sandbox;
+namespace Retrowaver\Allegro\REST\Token\TokenManager\Sandbox;
 
-use Allegro\REST\Token\TokenManager\AuthorizationCodeTokenManager;
+use Retrowaver\Allegro\REST\Token\TokenManager\AuthorizationCodeTokenManager;
 
 class SandboxAuthorizationCodeTokenManager extends AuthorizationCodeTokenManager
 {

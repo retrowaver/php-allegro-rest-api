@@ -1,11 +1,11 @@
 <?php
-namespace Allegro\REST\Middleware\Middleware;
+namespace Retrowaver\Allegro\REST\Middleware\Middleware;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Allegro\REST\Middleware\MiddlewareInterface;
+use Retrowaver\Allegro\REST\Middleware\MiddlewareInterface;
 use Http\Client\HttpClient;
-use Allegro\REST\Middleware\RequestHandlerInterface;
+use Retrowaver\Allegro\REST\Middleware\RequestHandlerInterface;
 
 /**
  * Base middleware

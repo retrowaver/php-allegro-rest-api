@@ -1,5 +1,5 @@
 <?php
-namespace Allegro\REST\Traits;
+namespace Retrowaver\Allegro\REST\Traits;
 
 trait HttpBuildQueryTrait
 {

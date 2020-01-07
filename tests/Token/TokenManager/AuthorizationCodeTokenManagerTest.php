@@ -2,13 +2,13 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use Allegro\REST\Token\TokenManager\AuthorizationCodeTokenManager;
+use Retrowaver\Allegro\REST\Token\TokenManager\AuthorizationCodeTokenManager;
 use Http\Mock\Client;
 use GuzzleHttp\Psr7\Response;
 use Http\Client\Exception\TransferException;
-use Allegro\REST\Token\AuthorizationCodeTokenInterface;
-use Allegro\REST\Token\AuthorizationCodeToken;
-use Allegro\REST\Token\Credentials;
+use Retrowaver\Allegro\REST\Token\AuthorizationCodeTokenInterface;
+use Retrowaver\Allegro\REST\Token\AuthorizationCodeToken;
+use Retrowaver\Allegro\REST\Token\Credentials;
 
 final class AuthorizationCodeTokenManagerTest extends TestCase
 {

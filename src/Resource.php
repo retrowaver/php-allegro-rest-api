@@ -1,13 +1,13 @@
 <?php
-namespace Allegro\REST;
+namespace Retrowaver\Allegro\REST;
 
 use Psr\Http\Message\ResponseInterface;
 use Http\Client\HttpClient;
 use Http\Message\MessageFactory;
 use Http\Client\Exception\TransferException;
-use Allegro\REST\Token\Token;
-use Allegro\REST\Traits\HttpBuildQueryTrait;
-use Allegro\REST\Traits\UuidTrait;
+use Retrowaver\Allegro\REST\Token\Token;
+use Retrowaver\Allegro\REST\Traits\HttpBuildQueryTrait;
+use Retrowaver\Allegro\REST\Traits\UuidTrait;
 
 class Resource
 {
