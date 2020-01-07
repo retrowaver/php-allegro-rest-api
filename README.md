@@ -40,9 +40,15 @@ Learn how it works here: https://developer.allegro.pl/auth/#user
 To use it with PHP Allegro REST API, do the following:
 ```php
 use Retrowaver\Allegro\REST\Token\TokenManager\AuthorizationCodeTokenManager;
+use Retrowaver\Allegro\REST\Token\Credentials;
 
 $tokenManager = new AuthorizationCodeTokenManager;
-$tokenManager->getUri(); // show this URI to your user
+$tokenManager->getUri(
+    new Credentials([
+        'clientId' => '...',
+        'redirectUri' => '...'
+    ])
+); // show this URI to your user
 ```
 
 ```php
